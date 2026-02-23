@@ -3,6 +3,7 @@ import google.generativeai as genai
 
 # 1. Setup Gemini using Streamlit Secrets (DO NOT paste your key here)
 try:
+    # This pulls the key from the 'Secrets' tab in the Streamlit Cloud dashboard
     genai.configure(api_key=st.secrets["GEMINI_KEY"])
     model = genai.GenerativeModel('gemini-1.5-flash')
 except Exception as e:
