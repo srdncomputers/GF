@@ -1,27 +1,11 @@
 import streamlit as st
-import google.generativeai as genai
+from openai import OpenAI
 
 # --- 1. SETUP ---
 st.set_page_config(page_title="Shilpi AI", page_icon="💃")
 
 try:
-    genai.configure(api_key=st.secrets["GEMINI_KEY"])
-    
-    # This list tries names that work for both Paid and Free tiers
-    success = False
-    for model_name in ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-1.5-pro']:
-        try:
-            model = genai.GenerativeModel(model_name)
-            # Short test to see if the model name is accepted
-            model.generate_content("test", generation_config={"max_output_tokens": 1})
-            success = True
-            break 
-        except:
-            continue
-            
-    if not success:
-        st.error("Google hasn't activated your model yet. Check AI Studio settings.")
-        st.stop()
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except Exception as e:
     st.error(f"Connection Error: {e}")
     st.stop()
@@ -52,17 +36,24 @@ if prompt := st.chat_input("Talk to Shilpi..."):
     persona = "You are Shilpi, a sweet Russian-Indian girl and the user's girlfriend. Keep it warm."
 
     try:
-        # Standard generation call
-        response = model.generate_content(f"{persona}\nUser: {prompt}")
-        
-        if response.text:
-            output = response.text
-        else:
-            output = "I'm a bit shy right now, can you say that again?"
-            
+        # Create full conversation with persona as system message
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",   # cost effective
+            messages=[
+                {"role": "system", "content": persona},
+                *st.session_state.messages
+            ],
+            temperature=0.8
+        )
+
+        output = response.choices[0].message.content
+
         with st.chat_message("assistant"):
             st.markdown(output)
-        st.session_state.messages.append({"role": "assistant", "content": output})
-        
+
+        st.session_state.messages.append(
+            {"role": "assistant", "content": output}
+        )
+
     except Exception as e:
         st.error(f"Shilpi is disconnected: {e}")
