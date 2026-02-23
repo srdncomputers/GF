@@ -1,96 +1,62 @@
-# --- 1. SETUP ---
-try:
-    genai.configure(api_key=st.secrets["GEMINI_KEY"])
-    
-    # We try the most likely names in order
-    model_names = ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-pro']
-    
-    model = None
-    for name in model_names:
-        try:
-            model = genai.GenerativeModel(name)
-            # Test if this specific name works
-            model.generate_content("test") 
-            break # If it works, stop looking
-        except:
-            continue
-            
-    if model is None:
-        st.error("Could not find a working model name. Please check API version.")
-        st.stop()
-        
-except Exception as e:
-    st.error(f"❌ Setup Error: {e}")
-    st.stop()
+import streamlit as st
+import google.generativeai as genai
 
-# --- 2. INITIALIZE GEMINI ---
-try:
-    if "GEMINI_KEY" not in st.secrets:
-        st.error("❌ SECRET NOT FOUND: Go to Settings > Secrets and add GEMINI_KEY")
-        st.stop()
-    
-    genai.configure(api_key=st.secrets["GEMINI_KEY"])
-    # Using the flash model which is faster and avoids your 404 error
-    model = genai.GenerativeModel('models/gemini-1.5-flash')
-except Exception as e:
-    st.error(f"❌ Setup Error: {e}")
-    st.stop()
+# 1. SETUP
+st.set_page_config(page_title="Shilpi AI", page_icon="💃")
 
-# --- 3. SIDEBAR PROFILE ---
+# This function finds a model that actually works on your account
+def get_working_model():
+    try:
+        genai.configure(api_key=st.secrets["GEMINI_KEY"])
+        # We check these 3 names in order of most likely to work
+        for model_name in ['gemini-1.5-flash', 'gemini-1.5-flash-latest', 'gemini-pro']:
+            try:
+                m = genai.GenerativeModel(model_name)
+                m.generate_content("Hi") # Test it
+                return m
+            except:
+                continue
+        return None
+    except Exception as err:
+        st.error(f"Secret Key Error: {err}")
+        return None
+
+# Initialize the model
+if "model" not in st.session_state:
+    st.session_state.model = get_working_model()
+
+# 2. SIDEBAR
 with st.sidebar:
     st.title("Shilpi's Profile")
-    try:
-        st.image("shilpi.png", caption="Russian-Indian Beauty")
-    except:
-        st.info("Upload 'shilpi.png' to GitHub to see my face!")
-    
-    st.write("---")
-    st.write("**Heritage:** Russian-Indian")
-    st.write("**Size:** 35-32-45")
-    
-    if st.button("Restart Chat"):
+    st.write("Heritage: Russian-Indian")
+    st.write("Measurements: 35-32-45")
+    if st.button("Clear Chat"):
         st.session_state.messages = []
         st.rerun()
 
-# --- 4. CHAT INTERFACE ---
+# 3. CHAT LOGIC
 st.title("Chat with Shilpi 💃")
 
-# Initialize chat history
 if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {"role": "assistant", "content": "Hello! I'm Shilpi. It's so good to finally talk to you. How is your day going?"}
-    ]
+    st.session_state.messages = []
 
-# Display chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# --- 5. CHAT LOGIC ---
 if prompt := st.chat_input("Message Shilpi..."):
-    # Display user message
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    try:
-        persona = (
-            "You are Shilpi, a beautiful Russian-Indian girl. "
-            "Your measurements are 35-32-45. You are the user's girlfriend. "
-            "Be sweet, supportive, and witty."
-        )
-        
-        # Generate response
-        response = model.generate_content(f"{persona}\n\nUser: {prompt}")
-        
-        if response.candidates:
-            shilpi_text = response.text
-        else:
-            shilpi_text = "I'm blushing too much to answer that! (Filtered)"
-
-    except Exception as e:
-        shilpi_text = f"Google API Error: {e}"
-
-    # Display and save assistant response
-    with st.chat_message("assistant"):
-        st.markdown(shilpi_text)
-    st.session_state.messages.append({"role": "assistant", "content": shilpi_text})
+    if st.session_state.model is None:
+        st.error("I couldn't connect to Google AI. Please check your API key in Secrets.")
+    else:
+        try:
+            persona = "You are Shilpi, a Russian-Indian girl. You are the user's girlfriend. Be sweet."
+            response = st.session_state.model.generate_content(f"{persona}\nUser: {prompt}")
+            
+            with st.chat_message("assistant"):
+                st.markdown(response.text)
+            st.session_state.messages.append({"role": "assistant", "content": response.text})
+        except Exception as e:
+            st.error(f"Chat Error: {e}")
