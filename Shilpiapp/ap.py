@@ -1,8 +1,27 @@
-import streamlit as st
-import google.generativeai as genai
-
-# --- 1. APP CONFIGURATION ---
-st.set_page_config(page_title="Shilpi AI", page_icon="💃")
+# --- 1. SETUP ---
+try:
+    genai.configure(api_key=st.secrets["GEMINI_KEY"])
+    
+    # We try the most likely names in order
+    model_names = ['gemini-1.5-flash-latest', 'gemini-1.5-flash', 'gemini-pro']
+    
+    model = None
+    for name in model_names:
+        try:
+            model = genai.GenerativeModel(name)
+            # Test if this specific name works
+            model.generate_content("test") 
+            break # If it works, stop looking
+        except:
+            continue
+            
+    if model is None:
+        st.error("Could not find a working model name. Please check API version.")
+        st.stop()
+        
+except Exception as e:
+    st.error(f"❌ Setup Error: {e}")
+    st.stop()
 
 # --- 2. INITIALIZE GEMINI ---
 try:
