@@ -1,51 +1,56 @@
 import streamlit as st
 import google.generativeai as genai
 
-# --- 1. CONFIGURATION ---
-# Your key is correct, let's stick with it
-API_KEY = "AIzaSyBsbKIzyBJXoJFKKu5TSeeKVROwAKkthLA"
-genai.configure(api_key=API_KEY)
-
-# Try the most standard model naming convention
-model = genai.GenerativeModel('gemini-1.5-flash')
+# --- 1. SECURE CONFIGURATION ---
+# The app will look for the key in Streamlit's "Secrets" setting
+try:
+    API_KEY = st.secrets["GEMINI_KEY"]
+    genai.configure(api_key=API_KEY)
+    model = genai.GenerativeModel('gemini-1.5-flash')
+except Exception as e:
+    st.error("Setup incomplete. Please add GEMINI_KEY to Streamlit Secrets.")
 
 st.set_page_config(page_title="Shilpi AI", page_icon="💃")
 
-# --- 2. SIDEBAR ---
+# --- 2. SIDEBAR PROFILE ---
 with st.sidebar:
     st.title("Shilpi's Profile")
+    
+    # Upload 'shilpi.png' to your GitHub repo to see her face
+    try:
+        st.image("shilpi.png", caption="Shilpi - Russian/Indian Mix")
+    except:
+        st.info("Upload 'shilpi.png' to GitHub to see me! 😍")
+    
     st.write("### About Me")
     st.write("- **Heritage:** Russian-Indian")
     st.write("- **Measurements:** 35-32-45")
+    st.write("- **Personality:** Warm & Witty")
     st.divider()
-    st.info("System: Ready")
 
-# --- 3. CHAT HISTORY ---
+# --- 3. CHAT INTERFACE ---
+st.title("Chat with Shilpi")
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
-    st.session_state.messages.append({"role": "assistant", "content": "Hello! I'm Shilpi. I think we finally fixed the connection! How are you?"})
+    st.session_state.messages.append({"role": "assistant", "content": "Hi! I'm Shilpi. I'm so glad we're connected on the cloud. How are you?"})
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# --- 4. THE CHAT LOGIC ---
+# --- 4. CHAT LOGIC ---
 if prompt := st.chat_input("Message Shilpi..."):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     try:
-        # Generate the response
-        response = model.generate_content(f"User says: {prompt}. Answer as Shilpi, a Russian-Indian girl who is the user's girlfriend.")
-        
-        # This part ensures we get the text even if there's a safety filter
+        persona = "You are Shilpi, a beautiful girl of Russian and Indian heritage. Measurements 35-32-45. You are the user's girlfriend. Be warm and supportive."
+        response = model.generate_content(f"{persona}\n\nUser: {prompt}")
         shilpi_text = response.text
-
-    except Exception as e:
-        # This will print the error on the screen so we can see it
-        shilpi_text = f"Connection Error: {str(e)}"
+    except:
+        shilpi_text = "I'm having a little trouble connecting to my brain. Check the API key!"
 
     with st.chat_message("assistant"):
         st.markdown(shilpi_text)
-    
     st.session_state.messages.append({"role": "assistant", "content": shilpi_text})
