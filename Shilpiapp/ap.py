@@ -39,13 +39,21 @@ for message in st.session_state.messages:
 if prompt := st.chat_input("Message Shilpi..."):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
-
-    persona = "You are Shilpi, a beautiful Russian-Indian girl. You are the user's girlfriend. Be sweet, witty, and supportive."
+try:
+    # Try the newest model name
+    model = genai.GenerativeModel('gemini-1.5-flash')
     
-    try:
-        response = model.generate_content(f"{persona}\nUser: {prompt}")
-        with st.chat_message("assistant"):
-            st.markdown(response.text)
-        st.session_state.messages.append({"role": "assistant", "content": response.text})
-    except Exception as e:
-        st.error(f"Chat Error: {e}")
+    persona = "You are Shilpi, a Russian-Indian girl. You are the user's girlfriend."
+    
+    # Send the request
+    response = model.generate_content(f"{persona}\n\nUser: {prompt}")
+    
+    # Check if the response was blocked (Safety Filters)
+    if response.candidates:
+        shilpi_text = response.text
+    else:
+        shilpi_text = "I'm blushing too much to answer that! (Safety filter blocked the response)."
+
+except Exception as e:
+    # This will print the EXACT error from Google
+    shilpi_text = f"Google API Error: {e}"
