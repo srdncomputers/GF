@@ -37,7 +37,7 @@ if not check_password():
     st.stop()
 
 # --- LOAD LOTTIE ANIMATION ---
-lottie_url = "https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json"
+lottie_url = "https://assets9.lottiefiles.com/packages/lf20_kyu7xb1v.json"
 lottie_animation = load_lottieurl(lottie_url)
 
 # --- SIDEBAR ---
@@ -76,6 +76,11 @@ if prompt := st.chat_input("Ask Mom anything..."):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
+    # Show searching book animation
+    thinking = st.empty()
+    with thinking.container():
+        st_lottie(lottie_animation, height=200, key="thinking")
+
     try:
         response = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -88,6 +93,8 @@ if prompt := st.chat_input("Ask Mom anything..."):
 
         output = response.choices[0].message.content
 
+        thinking.empty()  # Remove animation after response
+
         with st.chat_message("assistant"):
             st.markdown(output)
 
@@ -96,4 +103,5 @@ if prompt := st.chat_input("Ask Mom anything..."):
         )
 
     except Exception as e:
+        thinking.empty()
         st.error(f"Error: {e}")
