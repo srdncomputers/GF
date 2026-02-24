@@ -6,6 +6,31 @@ import requests
 # --- PAGE CONFIG (MUST BE FIRST STREAMLIT COMMAND) ---
 st.set_page_config(page_title="Mom Teacher AI", page_icon="👩")
 
+st.markdown("""
+<style>
+/* Soft classroom background */
+.stApp {
+    background-color: #fdf6ec;
+}
+
+/* Chat bubble style */
+[data-testid="stChatMessage"] {
+    border-radius: 15px;
+    padding: 10px;
+}
+
+/* User bubble */
+[data-testid="stChatMessage"][data-testid="stChatMessage-user"] {
+    background-color: #fff3cd;
+}
+
+/* Assistant bubble */
+[data-testid="stChatMessage"][data-testid="stChatMessage-assistant"] {
+    background-color: #e6f4ea;
+}
+</style>
+""", unsafe_allow_html=True)
+
 # --- FUNCTIONS ---
 def load_lottieurl(url):
     r = requests.get(url)
@@ -37,7 +62,7 @@ if not check_password():
     st.stop()
 
 # --- LOAD LOTTIE ANIMATION ---
-lottie_url = "https://assets9.lottiefiles.com/packages/lf20_kyu7xb1v.json"
+lottie_url = "https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json"
 lottie_animation = load_lottieurl(lottie_url)
 
 # --- SIDEBAR ---
@@ -76,10 +101,12 @@ if prompt := st.chat_input("Ask Mom anything..."):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Show searching book animation
-    thinking = st.empty()
-    with thinking.container():
-        st_lottie(lottie_animation, height=200, key="thinking")
+    # Beautiful thinking block
+    thinking_placeholder = st.empty()
+
+    with thinking_placeholder.container():
+        st.markdown("### 📖 Let me check in my book...")
+        st_lottie(lottie_animation, height=220, key="thinking_book")
 
     try:
         response = client.chat.completions.create(
@@ -93,7 +120,7 @@ if prompt := st.chat_input("Ask Mom anything..."):
 
         output = response.choices[0].message.content
 
-        thinking.empty()  # Remove animation after response
+        thinking_placeholder.empty()  # remove animation
 
         with st.chat_message("assistant"):
             st.markdown(output)
@@ -103,5 +130,5 @@ if prompt := st.chat_input("Ask Mom anything..."):
         )
 
     except Exception as e:
-        thinking.empty()
+        thinking_placeholder.empty()
         st.error(f"Error: {e}")
