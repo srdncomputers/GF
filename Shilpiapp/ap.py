@@ -65,11 +65,13 @@ Encourage the child.
 Ask small follow-up questions to check understanding.
 Keep tone warm and supportive.
 """
+if prompt := st.chat_input("Talk..."):
+    st.chat_message("user").markdown(prompt)
+    st.session_state.messages.append({"role": "user", "content": prompt})
 
-try:
-        # Create full conversation with persona as system message
+    try:
         response = client.chat.completions.create(
-            model="gpt-4o-mini",   # cost effective
+            model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": persona},
                 *st.session_state.messages
@@ -87,4 +89,4 @@ try:
         )
 
     except Exception as e:
-        st.error(f"Shilpi is disconnected: {e}")
+        st.error(f"Error: {e}")
