@@ -1,5 +1,19 @@
 import streamlit as st
 from openai import OpenAI
+from streamlit_lottie import st_lottie
+import requests
+
+import streamlit as st
+from openai import OpenAI
+from streamlit_lottie import st_lottie
+import requests
+
+# --- FUNCTIONS ---
+def load_lottieurl(url):
+    r = requests.get(url)
+    if r.status_code != 200:
+        return None
+    return r.json()
 
 def check_password():
     def password_entered():
@@ -10,10 +24,12 @@ def check_password():
             st.session_state["password_correct"] = False
 
     if "password_correct" not in st.session_state:
-        st.text_input("Enter Password", type="password", on_change=password_entered, key="password")
+        st.text_input("Enter Password", type="password",
+                      on_change=password_entered, key="password")
         return False
     elif not st.session_state["password_correct"]:
-        st.text_input("Enter Password", type="password", on_change=password_entered, key="password")
+        st.text_input("Enter Password", type="password",
+                      on_change=password_entered, key="password")
         st.error("Incorrect Password")
         return False
     else:
@@ -21,7 +37,7 @@ def check_password():
 
 if not check_password():
     st.stop()
-
+    
 # --- 1. SETUP ---
 st.set_page_config(page_title="Shilpi AI", page_icon="💃")
 
@@ -37,15 +53,14 @@ if "messages" not in st.session_state:
 
 # --- 3. UI & SIDEBAR ---
 with st.sidebar:
-    st.title("👩‍👦 Mom Teacher")
+    st_lottie(
+        lottie_animation,
+        height=250,
+        key="avatar"
+    )
 
-    st.write("**Role:** Loving Mother & Mentor")
-    st.write("**Mission:** Teach with patience and kindness")
-    st.write("**Teaching Style:** Simple, clear, and encouraging")
-
-    if st.button("Clear History"):
-        st.session_state.messages = []
-        st.rerun()
+    st.title("👩 Mom Teacher")
+    st.write("Teaching with love and patience ❤️")
 
 # Display chat history
 for message in st.session_state.messages:
