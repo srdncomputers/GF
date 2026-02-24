@@ -37,7 +37,19 @@ def check_password():
 
 if not check_password():
     st.stop()
-    
+
+# --- LOAD LOTTIE ANIMATION ---
+lottie_url = "https://assets2.lottiefiles.com/packages/lf20_5ngs2ksb.json"
+lottie_animation = load_lottieurl(lottie_url)
+
+# --- SIDEBAR ---
+with st.sidebar:
+    st_lottie(
+        lottie_animation,
+        height=250,
+        key="avatar"
+    )
+
 # --- 1. SETUP ---
 st.set_page_config(page_title="Shilpi AI", page_icon="💃")
 
