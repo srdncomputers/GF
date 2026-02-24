@@ -53,19 +53,8 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # --- 4. CHAT INPUT ---
-if prompt := st.chat_input("Talk..."):
-    st.chat_message("user").markdown(prompt)
-    st.session_state.messages.append({"role": "user", "content": prompt})
-
-persona = """
-You are a caring mother teaching her young child.
-Explain concepts in simple language.
-Use small examples and step-by-step explanation.
-Encourage the child.
-Ask small follow-up questions to check understanding.
-Keep tone warm and supportive.
-"""
-if prompt := st.chat_input("Talk..."):
+# --- CHAT INPUT ---
+if prompt := st.chat_input("Ask Mom anything..."):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
