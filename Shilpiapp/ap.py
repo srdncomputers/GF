@@ -62,7 +62,7 @@ if not check_password():
     st.stop()
 
 # --- LOAD LOTTIE ANIMATION ---
-lottie_url = "https://app.lottiefiles.com/animation/a3ea3aac-6a92-4149-8997-547c4991e314"
+lottie_url = "https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json"
 lottie_animation = load_lottieurl(lottie_url)
 
 # --- SIDEBAR ---
