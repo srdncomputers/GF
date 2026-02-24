@@ -66,7 +66,7 @@ Ask small follow-up questions to check understanding.
 Keep tone warm and supportive.
 """
 
-    try:
+ try:
         # Create full conversation with persona as system message
         response = client.chat.completions.create(
             model="gpt-4o-mini",   # cost effective
