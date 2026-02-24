@@ -3,10 +3,8 @@ from openai import OpenAI
 from streamlit_lottie import st_lottie
 import requests
 
-import streamlit as st
-from openai import OpenAI
-from streamlit_lottie import st_lottie
-import requests
+# --- PAGE CONFIG (MUST BE FIRST STREAMLIT COMMAND) ---
+st.set_page_config(page_title="Mom Teacher AI", page_icon="👩")
 
 # --- FUNCTIONS ---
 def load_lottieurl(url):
@@ -44,42 +42,35 @@ lottie_animation = load_lottieurl(lottie_url)
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st_lottie(
-        lottie_animation,
-        height=250,
-        key="avatar"
-    )
+    st_lottie(lottie_animation, height=250, key="avatar")
+    st.title("👩 Mom Teacher")
+    st.write("Teaching with love and patience ❤️")
 
-# --- 1. SETUP ---
-st.set_page_config(page_title="Shilpi AI", page_icon="💃")
-
+# --- OPENAI SETUP ---
 try:
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except Exception as e:
     st.error(f"Connection Error: {e}")
     st.stop()
 
-# --- 2. CHAT HISTORY ---
+# --- PERSONA ---
+persona = """
+You are a loving, patient mother teaching her child.
+Explain concepts in simple language.
+Use small examples.
+Encourage curiosity.
+Be kind and supportive.
+"""
+
+# --- CHAT HISTORY ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- 3. UI & SIDEBAR ---
-with st.sidebar:
-    st_lottie(
-        lottie_animation,
-        height=250,
-        key="avatar"
-    )
-
-    st.title("👩 Mom Teacher")
-    st.write("Teaching with love and patience ❤️")
-
-# Display chat history
+# --- DISPLAY CHAT HISTORY ---
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
-# --- 4. CHAT INPUT ---
 # --- CHAT INPUT ---
 if prompt := st.chat_input("Ask Mom anything..."):
     st.chat_message("user").markdown(prompt)
