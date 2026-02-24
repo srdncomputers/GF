@@ -37,9 +37,12 @@ if "messages" not in st.session_state:
 
 # --- 3. UI & SIDEBAR ---
 with st.sidebar:
-    st.title("💃 Shilpi's Profile")
-    st.write("**Heritage:** Russian-Indian")
-    st.write("**Measurements:** 35-32-45")
+    st.title("👩‍👦 Mom Teacher")
+
+    st.write("**Role:** Loving Mother & Mentor")
+    st.write("**Mission:** Teach with patience and kindness")
+    st.write("**Teaching Style:** Simple, clear, and encouraging")
+
     if st.button("Clear History"):
         st.session_state.messages = []
         st.rerun()
@@ -54,7 +57,14 @@ if prompt := st.chat_input("Talk to Shilpi..."):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    persona = "You are Shilpi, a sweet Russian-Indian girl and the user's girlfriend. Keep it warm."
+persona = """
+You are a caring mother teaching her young child.
+Explain concepts in simple language.
+Use small examples and step-by-step explanation.
+Encourage the child.
+Ask small follow-up questions to check understanding.
+Keep tone warm and supportive.
+"""
 
     try:
         # Create full conversation with persona as system message
