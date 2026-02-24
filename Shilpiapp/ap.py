@@ -1,4 +1,5 @@
 import streamlit as st
+from openai import OpenAI
 
 def check_password():
     def password_entered():
