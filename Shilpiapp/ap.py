@@ -3,76 +3,64 @@ from openai import OpenAI
 from streamlit_lottie import st_lottie
 import requests
 
-# --- PAGE CONFIG (MUST BE FIRST STREAMLIT COMMAND) ---
-st.set_page_config(page_title="Teacher AI", page_icon="👩")
+# -----------------------------------
+# PAGE CONFIG (MUST BE FIRST)
+# -----------------------------------
+st.set_page_config(page_title="SRDN SmartLearn", page_icon="📘")
 
-# --- CHAT STYLING ---
+# -----------------------------------
+# CHAT STYLING
+# -----------------------------------
 st.markdown("""
 <style>
-
-/* Chat bubble style */
 [data-testid="stChatMessage"] {
     border-radius: 15px;
     padding: 10px;
 }
-
-/* User bubble */
-[data-testid="stChatMessage"][data-testid="stChatMessage-user"] {
+[data-testid="stChatMessage-user"] {
     background-color: #fff3cd;
 }
-
-/* Assistant bubble */
-[data-testid="stChatMessage"][data-testid="stChatMessage-assistant"] {
+[data-testid="stChatMessage-assistant"] {
     background-color: #e6f4ea;
 }
-
 </style>
 """, unsafe_allow_html=True)
 
-# --- FUNCTIONS ---
+# -----------------------------------
+# FUNCTIONS
+# -----------------------------------
 def load_lottieurl(url):
     r = requests.get(url)
     if r.status_code != 200:
         return None
     return r.json()
 
-def check_password():
-    def password_entered():
-        if st.session_state["password"] == st.secrets["APP_PASSWORD"]:
-            st.session_state["password_correct"] = True
-            del st.session_state["password"]
-        else:
-            st.session_state["password_correct"] = False
+def build_persona(grade, subject):
+    return f"""
+    You are an experienced CBSE school teacher teaching {subject} to a {grade} student.
+    Explain clearly, use simple language, and provide structured answers.
+    """
 
-    if "password_correct" not in st.session_state:
-        st.text_input("Enter Password", type="password",
-                      on_change=password_entered, key="password")
-        return False
-    elif not st.session_state["password_correct"]:
-        st.text_input("Enter Password", type="password",
-                      on_change=password_entered, key="password")
-        st.error("Incorrect Password")
-        return False
-    else:
-        return True
-
-# if not check_password():
-#   st.stop()
-
-# --- LOAD LOTTIE ANIMATION ---
+# -----------------------------------
+# LOAD ANIMATION
+# -----------------------------------
 lottie_url = "https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json"
 lottie_animation = load_lottieurl(lottie_url)
 
-# --- OPENAI SETUP ---
+# -----------------------------------
+# OPENAI SETUP
+# -----------------------------------
 try:
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except Exception as e:
     st.error(f"Connection Error: {e}")
     st.stop()
 
-# --- SIDEBAR ---
+# -----------------------------------
+# SIDEBAR
+# -----------------------------------
 with st.sidebar:
-    st.title("SRDN SmartLearn")
+    st.title("📘 SRDN SmartLearn")
 
     grade = st.selectbox(
         "Select Grade",
@@ -86,11 +74,13 @@ with st.sidebar:
 
     mode = st.radio(
         "Learning Mode",
-        ["Concept", "Practice", "Revision"]
+        ["Concept", "Practice"]
     )
 
-# --- DYNAMIC HEADER TEXT ---
-header_text = f"📘 {grade} – {subject} | {mode} Mode"
+# -----------------------------------
+# HEADER
+# -----------------------------------
+header_text = f"{grade} – {subject} | {mode} Mode"
 
 st.markdown(f"""
 <div style='
@@ -101,68 +91,54 @@ st.markdown(f"""
     margin-bottom: 25px;
 '>
     <h1>SRDN SmartLearn</h1>
-    <h2>{header_text}</h2>
+    <h3>{header_text}</h3>
 </div>
 """, unsafe_allow_html=True)
 
-
-# --- PERSONA ---
-def build_persona(grade, subject, mode):
-
-    base = f"You are an experienced CBSE school teacher teaching {subject} to a {grade} student."
-
-    if mode == "Concept":
-        instruction = """
-        Explain the concept clearly.
-        Use simple language.
-        Give one worked example.
-        End with one short understanding check question.
-        """
-    elif mode == "Practice":
-        instruction = """
-        Ask one practice question related to the topic.
-        Wait for the student's answer.
-        Do not reveal the solution immediately.
-        """
-    else:  # Revision
-        instruction = """
-        Provide a short summary of the concept.
-        Highlight key formulas or points.
-        Give 2 quick recap questions.
-        """
-
-    return f"{base} {instruction}"
-
-# --- CHAT HISTORY ---
+# -----------------------------------
+# SESSION STATE INIT
+# -----------------------------------
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# --- DISPLAY CHAT HISTORY ---
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+if "practice_topic" not in st.session_state:
+    st.session_state.practice_topic = None
 
-# --- CHAT INPUT ---
-if prompt := st.chat_input("Ask your question..."):
+if "current_question" not in st.session_state:
+    st.session_state.current_question = None
 
-    # SAFETY FILTER
-    unsafe_words = ["violence", "kill", "adult", "sex", "weapon", "drugs"]
-    if any(word in prompt.lower() for word in unsafe_words):
-        st.warning("Let's focus on learning topics 😊")
-        st.stop()
+if "score" not in st.session_state:
+    st.session_state.score = 0
 
-    persona = build_persona(grade, subject, mode)
+if "question_count" not in st.session_state:
+    st.session_state.question_count = 0
 
-    st.chat_message("user").markdown(prompt)
-    st.session_state.messages.append({"role": "user", "content": prompt})
+# -----------------------------------
+# CONCEPT MODE (CHAT BASED)
+# -----------------------------------
+if mode == "Concept":
 
-    # Thinking Animation
-    thinking_placeholder = st.empty()
-    with thinking_placeholder.container():
-        st.markdown("### 📖 Checking concept...")
-        st_lottie(lottie_animation, height=200, key="thinking_book")
+    for message in st.session_state.messages:
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-    try:
+    if prompt := st.chat_input("Ask your question..."):
+
+        unsafe_words = ["violence", "kill", "adult", "sex", "weapon", "drugs"]
+        if any(word in prompt.lower() for word in unsafe_words):
+            st.warning("Let's focus on learning topics 😊")
+            st.stop()
+
+        persona = build_persona(grade, subject)
+
+        st.chat_message("user").markdown(prompt)
+        st.session_state.messages.append({"role": "user", "content": prompt})
+
+        thinking_placeholder = st.empty()
+        with thinking_placeholder.container():
+            st.markdown("### 📖 Checking concept...")
+            st_lottie(lottie_animation, height=200)
+
         response = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
@@ -182,6 +158,93 @@ if prompt := st.chat_input("Ask your question..."):
             {"role": "assistant", "content": output}
         )
 
-    except Exception as e:
-        thinking_placeholder.empty()
-        st.error(f"Error: {e}")
+# -----------------------------------
+# PRACTICE MODE (STRUCTURED ENGINE)
+# -----------------------------------
+if mode == "Practice":
+
+    if st.session_state.practice_topic is None:
+
+        topic = st.text_input("Enter topic (e.g., Fractions, Light, Nouns):")
+
+        if st.button("Start Practice") and topic:
+            st.session_state.practice_topic = topic
+            st.session_state.score = 0
+            st.session_state.question_count = 0
+
+            prompt = f"""
+            Generate ONE CBSE-level {grade} {subject} question on topic '{topic}'.
+            Do NOT give solution.
+            """
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.5
+            )
+
+            st.session_state.current_question = response.choices[0].message.content
+            st.rerun()
+
+    else:
+        st.markdown(f"### 📘 Topic: {st.session_state.practice_topic}")
+        st.markdown(f"### ❓ Question:\n{st.session_state.current_question}")
+
+        answer = st.text_input("Your Answer:")
+
+        if st.button("Submit Answer") and answer:
+
+            check_prompt = f"""
+            Question: {st.session_state.current_question}
+            Student Answer: {answer}
+
+            If correct respond only with:
+            CORRECT
+
+            If wrong respond with:
+            INCORRECT - brief explanation.
+            """
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": check_prompt}],
+                temperature=0
+            )
+
+            feedback = response.choices[0].message.content.strip()
+            st.markdown(f"### 📝 Feedback:\n{feedback}")
+
+            st.session_state.question_count += 1
+
+            if feedback.upper().startswith("CORRECT"):
+                st.session_state.score += 1
+
+            st.markdown(f"### ⭐ Score: {st.session_state.score}")
+            st.markdown(f"### 📊 Question: {st.session_state.question_count}/5")
+
+            if st.session_state.question_count >= 5:
+                st.success("🎉 Practice Session Complete!")
+                st.markdown(f"### Final Score: {st.session_state.score}/5")
+
+                if st.button("Start New Session"):
+                    st.session_state.practice_topic = None
+                    st.session_state.current_question = None
+                    st.session_state.score = 0
+                    st.session_state.question_count = 0
+                    st.rerun()
+            else:
+                if st.button("Next Question"):
+
+                    prompt = f"""
+                    Generate ONE CBSE-level {grade} {subject} question on topic '{st.session_state.practice_topic}'.
+                    Do NOT give solution.
+                    """
+
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "user", "content": prompt}],
+                        temperature=0.5
+                    )
+
+                    st.session_state.current_question = response.choices[0].message.content
+                    st.rerun()
