@@ -13,11 +13,17 @@ st.markdown("""
 """)
 
 st.markdown("""
-<style>
-/* Soft classroom background */
-.stApp {
-    background-color: #fdf6ec;
-}
+<div style='
+    background: linear-gradient(90deg, #fff4e6, #e6f4ff);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+'>
+    <h1>📖 Smart Learning Book</h1>
+    <h3>🌈 Let’s explore and learn together! ✨</h3>
+</div>
+""", unsafe_allow_html=True)
 
 /* Chat bubble style */
 [data-testid="stChatMessage"] {
