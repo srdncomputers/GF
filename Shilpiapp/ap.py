@@ -133,6 +133,13 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
 
+# --- OPENAI SETUP ---
+try:
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+except Exception as e:
+    st.error(f"Connection Error: {e}")
+    st.stop()
+
 # --- CHAT INPUT ---
 if prompt := st.chat_input("Ask Teacher anything..."):
 
