@@ -83,6 +83,14 @@ with st.sidebar:
         "Learning Mode",
         ["Teach", "Quiz", "Story"]
     )
+if "points" not in st.session_state:
+    st.session_state.points = 0
+
+st.sidebar.write(f"⭐ Learning Points: {st.session_state.points}")
+if mode == "Quiz":
+    st.session_state.points += 5
+
+
 
 # --- PERSONA ---
 def build_persona(age_group, subject, mode):
@@ -115,7 +123,15 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # --- CHAT INPUT ---
-if prompt := st.chat_input("Ask Mom anything..."):
+if prompt := st.chat_input("Ask Teacher anything..."):
+
+# --- SAFETY FILTER ---
+    unsafe_words = ["violence", "kill", "adult", "sex", "weapon", "drugs"]
+
+    if any(word in prompt.lower() for word in unsafe_words):
+        st.warning("Let's focus on positive learning topics 😊")
+        st.stop()
+
     persona = build_persona(age_group, subject, mode)
 
     st.chat_message("user").markdown(prompt)
