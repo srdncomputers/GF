@@ -73,10 +73,51 @@ with st.sidebar:
     )
 
     mode = st.radio(
-        "Learning Mode",
-        ["Concept", "Practice"]
-    )
+    "Learning Mode",
+    ["Homework Help", "Concept Learning", "Doubt Solver"]
+)
 
+# -----------------------------------
+# HOMEWORK HELPER MODE
+# -----------------------------------
+if mode == "Homework Help":
+
+    homework_question = st.text_area("Paste your homework question here:")
+
+    if st.button("Solve Homework") and homework_question:
+
+        thinking_placeholder = st.empty()
+
+        with thinking_placeholder.container():
+            st.markdown("### 📖 Solving step-by-step...")
+            st_lottie(lottie_animation, height=200)
+
+        prompt = f"""
+        You are a CBSE teacher helping a {grade} student in {subject}.
+
+        Homework Question:
+        {homework_question}
+
+        STRICT RULES:
+        - Explain step-by-step.
+        - Show formulas used.
+        - Use simple language.
+        - Clearly show final answer at end.
+        - After solution, ask one small follow-up question to check understanding.
+        """
+
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.6
+        )
+
+        output = response.choices[0].message.content
+
+        thinking_placeholder.empty()
+
+        st.markdown("### 📘 Solution")
+        st.markdown(output)
 # -----------------------------------
 # HEADER
 # -----------------------------------
