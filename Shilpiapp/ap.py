@@ -111,7 +111,18 @@ def build_persona(age_group, subject, mode):
     else:
         mode_instruction = "Teach the concept clearly."
 
-    return f"{base} Subject: {subject}. {style} {mode_instruction}"
+    return f"""
+{base}
+Subject: {subject}.
+{style}
+{mode_instruction}
+
+Structure response like:
+1. Simple Explanation
+2. Example
+3. Small Question for child
+Keep tone warm and encouraging.
+"""
 
 # --- CHAT HISTORY ---
 if "messages" not in st.session_state:
