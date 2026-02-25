@@ -7,8 +7,19 @@ import requests
 st.set_page_config(page_title="Teacher AI", page_icon="👩")
 
 # --- WELCOME HEADER ---
-st.markdown("""
-<div> ... Smart Learning Book ... </div>
+header_text = f"📘 {grade} – {subject} Learning Mode"
+
+st.markdown(f"""
+<div style='
+    background: linear-gradient(90deg, #e6f4ff, #f0f8ff);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+'>
+    <h1>SRDN SmartLearn</h1>
+    <h2>{header_text}</h2>
+</div>
 """, unsafe_allow_html=True)
 
 
@@ -78,28 +89,22 @@ except Exception as e:
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st.title("📚 Smart Learning Book")
 
-    age_group = st.selectbox(
-        "Select Age Group",
-        ["1-4", "5-8", "9-12", "13-16"]
-    )
+# --- GRADE SELECTION ---
+grade = st.sidebar.selectbox(
+    "Select Grade",
+    ["Grade 3", "Grade 4", "Grade 5", "Grade 6"]
+)
 
-    subject = st.selectbox(
-        "Select Subject",
-        ["General", "Math", "Science", "English", "Stories", "GK"]
-    )
+subject = st.sidebar.selectbox(
+    "Select Subject",
+    ["Math", "Science", "English"]
+)
 
-    mode = st.radio(
-        "Learning Mode",
-        ["Teach", "Quiz", "Story"]
-    )
-if "points" not in st.session_state:
-    st.session_state.points = 0
-
-st.sidebar.write(f"⭐ Learning Points: {st.session_state.points}")
-if mode == "Quiz":
-    st.session_state.points += 5
+mode = st.sidebar.radio(
+    "Learning Mode",
+    ["Concept", "Practice", "Revision"]
+)
 
 # --- DYNAMIC HEADER TEXT ---
 if age_group == "1-4":
@@ -126,36 +131,31 @@ st.markdown(f"""
 
 
 # --- PERSONA ---
-def build_persona(age_group, subject, mode):
-    base = "You are a loving, patient mother teaching a child."
-    if age_group == "1-4":
-        style = "Use very short sentences, simple words, emojis, and repetition."
-    elif age_group == "5-8":
-        style = "Explain in simple language with small examples."
-    elif age_group == "9-12":
-        style = "Explain clearly step-by-step and encourage thinking."
-    else:
-        style = "Explain concepts clearly and give structured answers."
+def build_persona(grade, subject, mode):
 
-    if mode == "Quiz":
-        mode_instruction = "Ask questions and wait for the child to answer."
-    elif mode == "Story":
-        mode_instruction = "Tell a short engaging story related to the topic."
-    else:
-        mode_instruction = "Teach the concept clearly."
+    base = f"You are an experienced CBSE school teacher teaching {subject} to a {grade} student."
 
-    return f"""
-{base}
-Subject: {subject}.
-{style}
-{mode_instruction}
+    if mode == "Concept":
+        instruction = """
+        Explain the concept clearly.
+        Use simple language.
+        Give one worked example.
+        End with one short understanding check question.
+        """
+    elif mode == "Practice":
+        instruction = """
+        Ask one practice question related to the topic.
+        Wait for the student's answer.
+        Do not reveal the solution immediately.
+        """
+    else:  # Revision
+        instruction = """
+        Provide a short summary of the concept.
+        Highlight key formulas or points.
+        Give 2 quick recap questions.
+        """
 
-Structure response like:
-1. Simple Explanation
-2. Example
-3. Small Question for child
-Keep tone warm and encouraging.
-"""
+    return f"{base} {instruction}"
 
 # --- CHAT HISTORY ---
 if "messages" not in st.session_state:
@@ -167,7 +167,7 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # --- CHAT INPUT ---
-if prompt := st.chat_input("Ask Teacher anything..."):
+persona = build_persona(grade, subject, mode)
 
 # --- SAFETY FILTER ---
     unsafe_words = ["violence", "kill", "adult", "sex", "weapon", "drugs"]
