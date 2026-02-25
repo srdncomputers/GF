@@ -4,7 +4,13 @@ from streamlit_lottie import st_lottie
 import requests
 
 # --- PAGE CONFIG (MUST BE FIRST STREAMLIT COMMAND) ---
-st.set_page_config(page_title="Mom Teacher AI", page_icon="👩")
+st.set_page_config(page_title="Teacher AI", page_icon="👩")
+
+# --- WELCOME HEADER ---
+st.markdown("""
+# 📖 Welcome to Smart Learning Book!
+### Let’s explore and learn together! ✨
+""")
 
 st.markdown("""
 <style>
