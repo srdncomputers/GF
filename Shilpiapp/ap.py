@@ -8,16 +8,7 @@ st.set_page_config(page_title="Teacher AI", page_icon="👩")
 
 # --- WELCOME HEADER ---
 st.markdown("""
-<div style='
-    background: linear-gradient(90deg, #fff4e6, #e6f4ff);
-    padding: 25px;
-    border-radius: 20px;
-    text-align: center;
-    margin-bottom: 25px;
-'>
-    <h1>📖 Smart Learning Book</h1>
-    <h3>🌈 Let’s explore and learn together! ✨</h3>
-</div>
+<div> ... Smart Learning Book ... </div>
 """, unsafe_allow_html=True)
 
 
@@ -110,6 +101,28 @@ st.sidebar.write(f"⭐ Learning Points: {st.session_state.points}")
 if mode == "Quiz":
     st.session_state.points += 5
 
+# --- DYNAMIC HEADER TEXT ---
+if age_group == "1-4":
+    header_text = "🌈 Let’s Learn with Fun!"
+elif age_group == "5-8":
+    header_text = "📖 Let’s Explore New Ideas!"
+elif age_group == "9-12":
+    header_text = "🧠 Let’s Build Strong Concepts!"
+else:  # 13-16
+    header_text = "📚 Advanced Learning Mode"
+
+st.markdown(f"""
+<div style='
+    background: linear-gradient(90deg, #fff4e6, #e6f4ff);
+    padding: 25px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 25px;
+'>
+    <h1>📖 Smart Learning Book</h1>
+    <h2>{header_text}</h2>
+</div>
+""", unsafe_allow_html=True)
 
 
 # --- PERSONA ---
