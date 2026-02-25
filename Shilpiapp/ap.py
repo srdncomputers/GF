@@ -104,7 +104,7 @@ def build_persona(age_group, subject, mode):
         mode_instruction = "Teach the concept clearly."
 
     return f"{base} Subject: {subject}. {style} {mode_instruction}"
-"""
+
 # --- CHAT HISTORY ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
