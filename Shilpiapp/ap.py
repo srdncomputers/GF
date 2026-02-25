@@ -173,7 +173,12 @@ if mode == "Practice":
             st.session_state.question_count = 0
 
             prompt = f"""
-            Generate ONE CBSE-level {grade} {subject} question on topic '{topic}'.
+            Generate ONE CBSE-level {grade} {subject} question.
+
+            Topic: {st.session_state.practice_topic}
+
+            The topic must belong to {subject} only.        
+            Do NOT mix subjects.
             Do NOT give solution.
             """
 
@@ -236,7 +241,10 @@ if mode == "Practice":
                 if st.button("Next Question"):
 
                     prompt = f"""
-                    Generate ONE CBSE-level {grade} {subject} question on topic '{st.session_state.practice_topic}'.
+                    Generate ONE CBSE-level {grade} {subject} question.
+                    Topic: {st.session_state.practice_topic}
+                    The topic must belong to {subject} only.
+                    Do NOT mix subjects.
                     Do NOT give solution.
                     """
 
