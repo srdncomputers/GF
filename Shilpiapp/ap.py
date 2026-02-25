@@ -25,7 +25,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------
-# FUNCTIONSs
+# FUNCTIONS
 # -----------------------------------
 def build_persona(grade, subject):
     return f"""
