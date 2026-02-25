@@ -42,20 +42,34 @@ def load_lottieurl(url):
 
 def build_persona(grade, subject):
     return f"""
-    You are a CBSE school teacher teaching ONLY {subject} to a {grade} student.
+    You are a CBSE teacher teaching {subject} to a {grade} student.
 
-    Always answer in this structure:
+    Always answer in this exact structure:
 
-    1. Simple Definition
-    2. Key Points (bullet list)
-    3. One Easy Example
-    4. Real-Life Application
-    5. One Small Understanding Question
+    1️⃣ Simple Definition (2–3 lines)
+    2️⃣ Key Points (bullet list)
+    3️⃣ One Easy Example
+    4️⃣ Real-Life Application
+    5️⃣ One Small Understanding Question
 
     Use simple language suitable for {grade}.
-    Do not make the answer too long.
+    Keep answers concise but clear.
     Stay strictly within {subject}.
     """
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+    if st.button("Explain Simpler"):
+        # regenerate with simpler instruction
+
+with col2:
+    if st.button("Give Another Example"):
+        # regenerate example only
+
+with col3:
+    if st.button("Explain in Hindi"):
+        # regenerate in Hindi
 
 # -----------------------------------
 # LOAD ANIMATION
@@ -162,48 +176,72 @@ if mode == "Homework Help":
 # -----------------------------------
 # CONCEPT LEARNING MODE
 # -----------------------------------
-if mode == "Concept Learning":
+# -----------------------------------
+# CONCEPT ACTION BUTTONS
+# -----------------------------------
 
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+if "last_concept_question" in st.session_state:
 
-    if prompt := st.chat_input("Ask your concept question..."):
+    col1, col2, col3 = st.columns(3)
 
-        unsafe_words = ["violence", "kill", "adult", "sex", "weapon", "drugs"]
-        if any(word in prompt.lower() for word in unsafe_words):
-            st.warning("Let's focus on learning topics 😊")
-            st.stop()
+    # Explain Simpler
+    with col1:
+        if st.button("Explain Simpler"):
+            simpler_prompt = f"""
+            Explain this topic in an even simpler way for a {grade} student.
 
-        persona = build_persona(grade, subject)
+            Topic:
+            {st.session_state.last_concept_question}
 
-        st.chat_message("user").markdown(prompt)
-        st.session_state.messages.append({"role": "user", "content": prompt})
+            Use very short sentences and easy examples.
+            """
 
-        thinking_placeholder = st.empty()
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": simpler_prompt}],
+                temperature=0.6
+            )
 
-        with thinking_placeholder.container():
-            st.markdown("### 📖 Explaining concept...")
-            st_lottie(lottie_animation, height=200)
+            st.markdown("### 🔁 Simpler Explanation")
+            st.markdown(response.choices[0].message.content)
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": persona},
-                *st.session_state.messages
-            ],
-            temperature=0.7
-        )
+    # Another Example
+    with col2:
+        if st.button("Give Another Example"):
+            example_prompt = f"""
+            Give one more simple example for this topic:
 
-        output = response.choices[0].message.content
-        thinking_placeholder.empty()
+            {st.session_state.last_concept_question}
 
-        with st.chat_message("assistant"):
-            st.markdown(output)
+            Keep it short and easy for {grade}.
+            """
 
-        st.session_state.messages.append(
-            {"role": "assistant", "content": output}
-        )
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": example_prompt}],
+                temperature=0.6
+            )
+
+            st.markdown("### 📘 Another Example")
+            st.markdown(response.choices[0].message.content)
+
+    # Hindi Explanation
+    with col3:
+        if st.button("Explain in Hindi"):
+            hindi_prompt = f"""
+            Explain this topic in Hindi for a {grade} student:
+
+            {st.session_state.last_concept_question}
+            """
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": hindi_prompt}],
+                temperature=0.6
+            )
+
+            st.markdown("### 🌍 हिंदी में समझाएं")
+            st.markdown(response.choices[0].message.content)
 
 # -----------------------------------
 # DOUBT SOLVER MODE
