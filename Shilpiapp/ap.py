@@ -58,8 +58,8 @@ def check_password():
     else:
         return True
 
-if not check_password():
-    st.stop()
+# if not check_password():
+#   st.stop()
 
 # --- LOAD LOTTIE ANIMATION ---
 lottie_url = "https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json"
@@ -71,7 +71,7 @@ try:
 except Exception as e:
     st.error(f"Connection Error: {e}")
     st.stop()
-    
+
 # --- SIDEBAR ---
 with st.sidebar:
     st.title("📚 Smart Learning Book")
