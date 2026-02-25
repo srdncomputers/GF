@@ -116,16 +116,32 @@ for message in st.session_state.messages:
 
 # --- CHAT INPUT ---
 if prompt := st.chat_input("Ask Mom anything..."):
-    
-persona = build_persona(age_group, subject, mode)
-response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": persona},
-            *st.session_state.messages
+    persona = build_persona(age_group, subject, mode)
 
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
+
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": persona},
+                *st.session_state.messages
+            ],
+            temperature=0.8
+        )
+
+        output = response.choices[0].message.content
+
+        with st.chat_message("assistant"):
+            st.markdown(output)
+
+        st.session_state.messages.append(
+            {"role": "assistant", "content": output}
+        )
+
+    except Exception as e:
+        st.error(f"Error: {e}")
 
     # Beautiful thinking block
     thinking_placeholder = st.empty()
