@@ -8,11 +8,6 @@ st.set_page_config(page_title="Teacher AI", page_icon="👩")
 
 # --- WELCOME HEADER ---
 st.markdown("""
-# 📖 Welcome to Smart Learning Book!
-### Let’s explore and learn together! ✨
-""")
-
-st.markdown("""
 <div style='
     background: linear-gradient(90deg, #fff4e6, #e6f4ff);
     padding: 25px;
@@ -24,6 +19,11 @@ st.markdown("""
     <h3>🌈 Let’s explore and learn together! ✨</h3>
 </div>
 """, unsafe_allow_html=True)
+
+
+# --- CHAT STYLING ---
+st.markdown("""
+<style>
 
 /* Chat bubble style */
 [data-testid="stChatMessage"] {
@@ -40,6 +40,7 @@ st.markdown("""
 [data-testid="stChatMessage"][data-testid="stChatMessage-assistant"] {
     background-color: #e6f4ea;
 }
+
 </style>
 """, unsafe_allow_html=True)
 
