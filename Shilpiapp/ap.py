@@ -124,11 +124,7 @@ if mode == "Homework Help":
 
     if st.button("Solve Homework") and homework_question.strip():
 
-        thinking_placeholder = st.empty()
-
-        with thinking_placeholder.container():
-            st.markdown("### 📖 Solving step-by-step...")
-            st_lottie(lottie_animation, height=200)
+    with st.spinner("Solving step-by-step..."):
 
         prompt = f"""
         You are a CBSE teacher helping a {grade} student in {subject}.
@@ -179,18 +175,17 @@ if mode == "Concept Learning":
         st.session_state.messages.append({"role": "user", "content": prompt})
 
         thinking_placeholder = st.empty()
-        with thinking_placeholder.container():
-            st.markdown("### 📖 Explaining concept...")
-            st_lottie(lottie_animation, height=200)
+        with st.spinner("Explaining concept..."):
+           response = client.chat.completions.create(
+           model="gpt-4o-mini",
+           messages=[
+            {"role": "system", "content": persona},
+            *st.session_state.messages
+        ],
+        temperature=0.7
+    )
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": persona},
-                *st.session_state.messages
-            ],
-            temperature=0.7
-        )
+output = response.choices[0].message.content
 
         output = response.choices[0].message.content
         thinking_placeholder.empty()
@@ -274,11 +269,12 @@ if mode == "Doubt Solver":
         Give one short example if needed.
         """
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.6
-        )
+        with st.spinner("Clearing your doubt..."):
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.6
+    )
 
         st.markdown("### 🧠 Explanation")
         st.markdown(response.choices[0].message.content)
