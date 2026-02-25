@@ -105,7 +105,6 @@ def build_persona(age_group, subject, mode):
 
     return f"{base} Subject: {subject}. {style} {mode_instruction}"
 """
-
 # --- CHAT HISTORY ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -124,7 +123,7 @@ response = client.chat.completions.create(
         messages=[
             {"role": "system", "content": persona},
             *st.session_state.messages
-            
+
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
