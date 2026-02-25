@@ -6,23 +6,6 @@ import requests
 # --- PAGE CONFIG (MUST BE FIRST STREAMLIT COMMAND) ---
 st.set_page_config(page_title="Teacher AI", page_icon="👩")
 
-# --- WELCOME HEADER ---
-header_text = f"📘 {grade} – {subject} Learning Mode"
-
-st.markdown(f"""
-<div style='
-    background: linear-gradient(90deg, #e6f4ff, #f0f8ff);
-    padding: 25px;
-    border-radius: 20px;
-    text-align: center;
-    margin-bottom: 25px;
-'>
-    <h1>SRDN SmartLearn</h1>
-    <h2>{header_text}</h2>
-</div>
-""", unsafe_allow_html=True)
-
-
 # --- CHAT STYLING ---
 st.markdown("""
 <style>
@@ -89,42 +72,35 @@ except Exception as e:
 
 # --- SIDEBAR ---
 with st.sidebar:
+    st.title("SRDN SmartLearn")
 
-# --- GRADE SELECTION ---
-grade = st.sidebar.selectbox(
-    "Select Grade",
-    ["Grade 3", "Grade 4", "Grade 5", "Grade 6"]
-)
+    grade = st.selectbox(
+        "Select Grade",
+        ["Grade 3", "Grade 4", "Grade 5", "Grade 6"]
+    )
 
-subject = st.sidebar.selectbox(
-    "Select Subject",
-    ["Math", "Science", "English"]
-)
+    subject = st.selectbox(
+        "Select Subject",
+        ["Math", "Science", "English"]
+    )
 
-mode = st.sidebar.radio(
-    "Learning Mode",
-    ["Concept", "Practice", "Revision"]
-)
+    mode = st.radio(
+        "Learning Mode",
+        ["Concept", "Practice", "Revision"]
+    )
 
 # --- DYNAMIC HEADER TEXT ---
-if age_group == "1-4":
-    header_text = "🌈 Let’s Learn with Fun!"
-elif age_group == "5-8":
-    header_text = "📖 Let’s Explore New Ideas!"
-elif age_group == "9-12":
-    header_text = "🧠 Let’s Build Strong Concepts!"
-else:  # 13-16
-    header_text = "📚 Advanced Learning Mode"
+header_text = f"📘 {grade} – {subject} | {mode} Mode"
 
 st.markdown(f"""
 <div style='
-    background: linear-gradient(90deg, #fff4e6, #e6f4ff);
+    background: linear-gradient(90deg, #e6f4ff, #f0f8ff);
     padding: 25px;
     border-radius: 20px;
     text-align: center;
     margin-bottom: 25px;
 '>
-    <h1>📖 Smart Learning Book</h1>
+    <h1>SRDN SmartLearn</h1>
     <h2>{header_text}</h2>
 </div>
 """, unsafe_allow_html=True)
@@ -167,48 +143,24 @@ for message in st.session_state.messages:
         st.markdown(message["content"])
 
 # --- CHAT INPUT ---
-persona = build_persona(grade, subject, mode)
+if prompt := st.chat_input("Ask your question..."):
 
-# --- SAFETY FILTER ---
+    # SAFETY FILTER
     unsafe_words = ["violence", "kill", "adult", "sex", "weapon", "drugs"]
-
     if any(word in prompt.lower() for word in unsafe_words):
-        st.warning("Let's focus on positive learning topics 😊")
+        st.warning("Let's focus on learning topics 😊")
         st.stop()
 
-    persona = build_persona(age_group, subject, mode)
+    persona = build_persona(grade, subject, mode)
 
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": persona},
-                *st.session_state.messages
-            ],
-            temperature=0.8
-        )
-
-        output = response.choices[0].message.content
-
-        with st.chat_message("assistant"):
-            st.markdown(output)
-
-        st.session_state.messages.append(
-            {"role": "assistant", "content": output}
-        )
-
-    except Exception as e:
-        st.error(f"Error: {e}")
-
-    # Beautiful thinking block
+    # Thinking Animation
     thinking_placeholder = st.empty()
-
     with thinking_placeholder.container():
-        st.markdown("### 📖 Let me check in my book...")
-        st_lottie(lottie_animation, height=220, key="thinking_book")
+        st.markdown("### 📖 Checking concept...")
+        st_lottie(lottie_animation, height=200, key="thinking_book")
 
     try:
         response = client.chat.completions.create(
@@ -217,12 +169,11 @@ persona = build_persona(grade, subject, mode)
                 {"role": "system", "content": persona},
                 *st.session_state.messages
             ],
-            temperature=0.8
+            temperature=0.7
         )
 
         output = response.choices[0].message.content
-
-        thinking_placeholder.empty()  # remove animation
+        thinking_placeholder.empty()
 
         with st.chat_message("assistant"):
             st.markdown(output)
