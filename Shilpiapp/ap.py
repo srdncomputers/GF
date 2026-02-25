@@ -65,6 +65,13 @@ if not check_password():
 lottie_url = "https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json"
 lottie_animation = load_lottieurl(lottie_url)
 
+# --- OPENAI SETUP ---
+try:
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+except Exception as e:
+    st.error(f"Connection Error: {e}")
+    st.stop()
+    
 # --- SIDEBAR ---
 with st.sidebar:
     st.title("📚 Smart Learning Book")
@@ -132,13 +139,6 @@ if "messages" not in st.session_state:
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-
-# --- OPENAI SETUP ---
-try:
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-except Exception as e:
-    st.error(f"Connection Error: {e}")
-    st.stop()
 
 # --- CHAT INPUT ---
 if prompt := st.chat_input("Ask Teacher anything..."):
