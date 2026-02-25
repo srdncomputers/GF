@@ -67,24 +67,43 @@ lottie_animation = load_lottieurl(lottie_url)
 
 # --- SIDEBAR ---
 with st.sidebar:
-    st_lottie(lottie_animation, height=250, key="avatar")
-    st.title("👩 Mom Teacher")
-    st.write("Teaching with love and patience ❤️")
+    st.title("📚 Smart Learning Book")
 
-# --- OPENAI SETUP ---
-try:
-    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-except Exception as e:
-    st.error(f"Connection Error: {e}")
-    st.stop()
+    age_group = st.selectbox(
+        "Select Age Group",
+        ["1-4", "5-8", "9-12", "13-16"]
+    )
+
+    subject = st.selectbox(
+        "Select Subject",
+        ["General", "Math", "Science", "English", "Stories", "GK"]
+    )
+
+    mode = st.radio(
+        "Learning Mode",
+        ["Teach", "Quiz", "Story"]
+    )
 
 # --- PERSONA ---
-persona = """
-You are a loving, patient mother teaching her child.
-Explain concepts in simple language.
-Use small examples.
-Encourage curiosity.
-Be kind and supportive.
+def build_persona(age_group, subject, mode):
+    base = "You are a loving, patient mother teaching a child."
+    if age_group == "1-4":
+        style = "Use very short sentences, simple words, emojis, and repetition."
+    elif age_group == "5-8":
+        style = "Explain in simple language with small examples."
+    elif age_group == "9-12":
+        style = "Explain clearly step-by-step and encourage thinking."
+    else:
+        style = "Explain concepts clearly and give structured answers."
+
+    if mode == "Quiz":
+        mode_instruction = "Ask questions and wait for the child to answer."
+    elif mode == "Story":
+        mode_instruction = "Tell a short engaging story related to the topic."
+    else:
+        mode_instruction = "Teach the concept clearly."
+
+    return f"{base} Subject: {subject}. {style} {mode_instruction}"
 """
 
 # --- CHAT HISTORY ---
@@ -98,6 +117,14 @@ for message in st.session_state.messages:
 
 # --- CHAT INPUT ---
 if prompt := st.chat_input("Ask Mom anything..."):
+    
+persona = build_persona(age_group, subject, mode)
+response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "system", "content": persona},
+            *st.session_state.messages
+            
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
