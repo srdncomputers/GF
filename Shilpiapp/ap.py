@@ -1,7 +1,5 @@
 import streamlit as st
 from openai import OpenAI
-from streamlit_lottie import st_lottie
-import requests
 
 # -----------------------------------
 # PAGE CONFIG
@@ -29,12 +27,6 @@ st.markdown("""
 # -----------------------------------
 # FUNCTIONS
 # -----------------------------------
-def load_lottieurl(url):
-    r = requests.get(url)
-    if r.status_code != 200:
-        return None
-    return r.json()
-
 def build_persona(grade, subject):
     return f"""
     You are a CBSE teacher teaching {subject} to a {grade} student.
@@ -51,12 +43,6 @@ def build_persona(grade, subject):
     Keep answers concise.
     Stay strictly within {subject}.
     """
-
-# -----------------------------------
-# LOAD ANIMATION
-# -----------------------------------
-lottie_url = "https://assets10.lottiefiles.com/packages/lf20_qp1q7mct.json"
-lottie_animation = load_lottieurl(lottie_url)
 
 # -----------------------------------
 # OPENAI SETUP
@@ -124,29 +110,27 @@ if mode == "Homework Help":
 
     if st.button("Solve Homework") and homework_question.strip():
 
-    with st.spinner("Solving step-by-step..."):
+        with st.spinner("Solving step-by-step..."):
 
-        prompt = f"""
-        You are a CBSE teacher helping a {grade} student in {subject}.
+            prompt = f"""
+            You are a CBSE teacher helping a {grade} student in {subject}.
 
-        Homework Question:
-        {homework_question}
+            Homework Question:
+            {homework_question}
 
-        STRICT RULES:
-        - Explain step-by-step.
-        - Show formulas used.
-        - Use simple language.
-        - Clearly show final answer at end.
-        - Ask one small follow-up question.
-        """
+            STRICT RULES:
+            - Explain step-by-step.
+            - Show formulas used.
+            - Use simple language.
+            - Clearly show final answer at end.
+            - Ask one small follow-up question.
+            """
 
-        response = client.chat.completions.create(
-            model="gpt-4o-mini",
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.6
-        )
-
-        thinking_placeholder.empty()
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.6
+            )
 
         st.markdown("### 📘 Solution")
         st.markdown(response.choices[0].message.content)
@@ -174,21 +158,17 @@ if mode == "Concept Learning":
         st.chat_message("user").markdown(prompt)
         st.session_state.messages.append({"role": "user", "content": prompt})
 
-        thinking_placeholder = st.empty()
         with st.spinner("Explaining concept..."):
-           response = client.chat.completions.create(
-           model="gpt-4o-mini",
-           messages=[
-            {"role": "system", "content": persona},
-            *st.session_state.messages
-        ],
-        temperature=0.7
-    )
-
-output = response.choices[0].message.content
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[
+                    {"role": "system", "content": persona},
+                    *st.session_state.messages
+                ],
+                temperature=0.7
+            )
 
         output = response.choices[0].message.content
-        thinking_placeholder.empty()
 
         with st.chat_message("assistant"):
             st.markdown(output)
@@ -204,48 +184,48 @@ output = response.choices[0].message.content
 
         with col1:
             if st.button("Explain Simpler"):
-                simpler_prompt = f"""
-                Explain this topic in a much simpler way for a {grade} student:
-                {st.session_state.last_concept_question}
-                """
-
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": simpler_prompt}],
-                    temperature=0.6
-                )
+                with st.spinner("Making it simpler..."):
+                    simpler_prompt = f"""
+                    Explain this topic in a much simpler way for a {grade} student:
+                    {st.session_state.last_concept_question}
+                    """
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "user", "content": simpler_prompt}],
+                        temperature=0.6
+                    )
 
                 st.markdown("### 🔁 Simpler Explanation")
                 st.markdown(response.choices[0].message.content)
 
         with col2:
             if st.button("Give Another Example"):
-                example_prompt = f"""
-                Give one more simple example for:
-                {st.session_state.last_concept_question}
-                """
-
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": example_prompt}],
-                    temperature=0.6
-                )
+                with st.spinner("Generating example..."):
+                    example_prompt = f"""
+                    Give one more simple example for:
+                    {st.session_state.last_concept_question}
+                    """
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "user", "content": example_prompt}],
+                        temperature=0.6
+                    )
 
                 st.markdown("### 📘 Another Example")
                 st.markdown(response.choices[0].message.content)
 
         with col3:
             if st.button("Explain in Hindi"):
-                hindi_prompt = f"""
-                Explain this topic in Hindi for a {grade} student:
-                {st.session_state.last_concept_question}
-                """
-
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=[{"role": "user", "content": hindi_prompt}],
-                    temperature=0.6
-                )
+                with st.spinner("Explaining in Hindi..."):
+                    hindi_prompt = f"""
+                    Explain this topic in Hindi for a {grade} student:
+                    {st.session_state.last_concept_question}
+                    """
+                    response = client.chat.completions.create(
+                        model="gpt-4o-mini",
+                        messages=[{"role": "user", "content": hindi_prompt}],
+                        temperature=0.6
+                    )
 
                 st.markdown("### 🌍 हिंदी में समझाएं")
                 st.markdown(response.choices[0].message.content)
@@ -259,22 +239,22 @@ if mode == "Doubt Solver":
 
     if st.button("Clear Doubt") and doubt.strip():
 
-        prompt = f"""
-        You are helping a {grade} student in {subject}.
-
-        Student Doubt:
-        {doubt}
-
-        Explain clearly in simple language.
-        Give one short example if needed.
-        """
-
         with st.spinner("Clearing your doubt..."):
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.6
-    )
+            prompt = f"""
+            You are helping a {grade} student in {subject}.
+
+            Student Doubt:
+            {doubt}
+
+            Explain clearly in simple language.
+            Give one short example if needed.
+            """
+
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.6
+            )
 
         st.markdown("### 🧠 Explanation")
         st.markdown(response.choices[0].message.content)
