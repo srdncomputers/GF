@@ -112,9 +112,11 @@ if mode == "Homework Help":
 
         with st.spinner("Solving step-by-step..."):
 
-            prompt = f"""
-            You are a CBSE teacher helping a {grade} student in {subject}.
-
+            if grade in ["Grade 3", "Grade 4", "Grade 5"]:
+                template = PRIMARY_TEMPLATE
+            else:
+                template = MIDDLE_TEMPLATE
+            
             Homework Question:
             {homework_question}
 
