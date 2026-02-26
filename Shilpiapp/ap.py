@@ -101,6 +101,39 @@ if "messages" not in st.session_state:
 if "last_concept_question" not in st.session_state:
     st.session_state.last_concept_question = None
 
+def get_math_template(grade):
+
+    primary_grades = ["Grade 3", "Grade 4", "Grade 5"]
+
+    if grade in primary_grades:
+        return """
+        Follow this exact structure:
+
+        1️⃣ What is given?
+        2️⃣ What do we need to find?
+        3️⃣ Solve step-by-step using very simple language.
+        4️⃣ Final Answer (clearly written)
+        5️⃣ One easy similar practice question
+
+        Use very simple words.
+        Avoid complex formulas.
+        Encourage the student.
+        """
+    else:
+        return """
+        Follow this exact structure:
+
+        1️⃣ Given Data
+        2️⃣ Formula Used (if applicable)
+        3️⃣ Substitution
+        4️⃣ Step-by-step Calculation
+        5️⃣ Final Answer (clearly highlighted)
+        6️⃣ One exam-style follow-up question
+
+        Use proper mathematical terminology.
+        Show reasoning clearly.
+        """
+
 # ===================================
 # HOMEWORK HELPER MODE
 # ===================================
@@ -112,21 +145,37 @@ if mode == "Homework Help":
 
         with st.spinner("Solving step-by-step..."):
 
-            if grade in ["Grade 3", "Grade 4", "Grade 5"]:
-                template = PRIMARY_TEMPLATE
-            else:
-                template = MIDDLE_TEMPLATE
-            
-            Homework Question:
-            {homework_question}
+            # Only apply adaptive template for Math
+            if subject == "Math":
 
-            STRICT RULES:
-            - Explain step-by-step.
-            - Show formulas used.
-            - Use simple language.
-            - Clearly show final answer at end.
-            - Ask one small follow-up question.
-            """
+                template = get_math_template(grade)
+
+                prompt = f"""
+                You are a CBSE Math teacher helping a {grade} student.
+
+                Homework Question:
+                {homework_question}
+
+                STRICT RULES:
+                - Ensure the question belongs to Math.
+                - If not, say:
+                  "This question does not belong to Math. Please change subject."
+
+                {template}
+                """
+
+            else:
+                # For non-math subjects (temporary basic structure)
+                prompt = f"""
+                You are a CBSE teacher helping a {grade} student in {subject}.
+
+                Homework Question:
+                {homework_question}
+
+                Explain clearly and step-by-step.
+                Show final answer clearly.
+                Ask one small follow-up question.
+                """
 
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
