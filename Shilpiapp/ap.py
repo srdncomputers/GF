@@ -56,7 +56,24 @@ st.markdown("""
 
 </style>
 
-            /* Make text area label white */
+<!-- Floating Symbols -->
+<div class="floating-symbol symbol1">EcMC2</div>
+<div class="floating-symbol symbol2">π</div>
+<div class="floating-symbol symbol3">⚛</div>
+<div class="floating-symbol symbol4">🌍</div>
+<div class="floating-symbol symbol5">📜</div>
+<div class="floating-symbol symbol6">√</div>
+<div class="floating-symbol symbol7">📚</div>
+
+""", unsafe_allow_html=True)
+
+# -----------------------------------
+# STYLING
+# -----------------------------------
+st.markdown("""
+<style>
+
+/* Make text area label white */
 label {
     color: white !important;
     font-weight: 500;
@@ -79,35 +96,6 @@ textarea::placeholder {
     color: rgba(255,255,255,0.6) !important;
 }
 
-</style>
-""", unsafe_allow_html=True)
-
-<!-- Floating Symbols -->
-<div class="floating-symbol symbol1">EcMC2</div>
-<div class="floating-symbol symbol2">π</div>
-<div class="floating-symbol symbol3">⚛</div>
-<div class="floating-symbol symbol4">🌍</div>
-<div class="floating-symbol symbol5">📜</div>
-<div class="floating-symbol symbol6">√</div>
-<div class="floating-symbol symbol7">📚</div>
-
-""", unsafe_allow_html=True)
-
-# -----------------------------------
-# STYLING
-# -----------------------------------
-st.markdown("""
-<style>
-[data-testid="stChatMessage"] {
-    border-radius: 15px;
-    padding: 10px;
-}
-[data-testid="stChatMessage-user"] {
-    background-color: #fff3cd;
-}
-[data-testid="stChatMessage-assistant"] {
-    background-color: #e6f4ea;
-}
 </style>
 """, unsafe_allow_html=True)
 
