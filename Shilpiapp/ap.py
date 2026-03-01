@@ -73,27 +73,52 @@ st.markdown("""
 st.markdown("""
 <style>
 
-/* Make text area label white */
-label {
+/* ============================= */
+/* PREMIUM BUTTON STYLE */
+/* ============================= */
+
+.stButton > button {
+    background: linear-gradient(90deg, #2563eb, #1e3a8a);
     color: white !important;
-    font-weight: 500;
+    border-radius: 12px;
+    padding: 10px 24px;
+    font-weight: 600;
+    border: none;
+    transition: all 0.3s ease-in-out;
 }
 
-/* Make input text white */
-textarea {
+.stButton > button:hover {
+    background: linear-gradient(90deg, #1e40af, #1e3a8a);
+    box-shadow: 0 0 15px rgba(37,99,235,0.6);
+    transform: translateY(-2px);
+}
+
+/* ============================= */
+/* SIDEBAR PREMIUM GLASS STYLE */
+/* ============================= */
+
+section[data-testid="stSidebar"] {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(15px);
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+
+/* Sidebar text white */
+section[data-testid="stSidebar"] * {
     color: white !important;
 }
 
-/* Make text area background semi-transparent */
-textarea {
+/* Sidebar dropdown styling */
+section[data-testid="stSidebar"] select {
     background-color: rgba(255,255,255,0.08) !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
+    color: white !important;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
 }
 
-/* Placeholder text lighter */
-textarea::placeholder {
-    color: rgba(255,255,255,0.6) !important;
+/* Sidebar radio buttons */
+section[data-testid="stSidebar"] label {
+    color: white !important;
 }
 
 </style>
