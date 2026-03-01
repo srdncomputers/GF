@@ -73,6 +73,27 @@ st.markdown("""
 st.markdown("""
 <style>
 
+/* Make text area label white */
+div[data-testid="stTextArea"] label {
+    color: white !important;
+    font-weight: 600;
+}
+
+/* Make text inside textarea white */
+div[data-testid="stTextArea"] textarea {
+    color: white !important;
+}
+
+/* Optional: Make textarea background glass style */
+div[data-testid="stTextArea"] textarea {
+    background-color: rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
+
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
 /* ============================= */
