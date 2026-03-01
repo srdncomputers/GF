@@ -79,23 +79,17 @@ st.markdown("""
     font-weight: 600 !important;
 }
 
-/* Sometimes Streamlit wraps label inside div */
 [data-testid="stTextArea"] label p {
     color: white !important;
 }
 
-/* Text inside textarea */
 [data-testid="stTextArea"] textarea {
     color: white !important;
 }
 
-/* Placeholder text */
 [data-testid="stTextArea"] textarea::placeholder {
     color: rgba(255,255,255,0.6) !important;
 }
-
-</style>
-""", unsafe_allow_html=True)
 
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
@@ -127,12 +121,10 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Sidebar text white */
 section[data-testid="stSidebar"] * {
     color: white !important;
 }
 
-/* Sidebar dropdown styling */
 section[data-testid="stSidebar"] select {
     background-color: rgba(255,255,255,0.08) !important;
     color: white !important;
@@ -140,7 +132,6 @@ section[data-testid="stSidebar"] select {
     border: 1px solid rgba(255,255,255,0.2);
 }
 
-/* Sidebar radio buttons */
 section[data-testid="stSidebar"] label {
     color: white !important;
 }
