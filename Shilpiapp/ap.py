@@ -81,14 +81,18 @@ header_text = f"{grade} – {subject} | {mode}"
 
 st.markdown(f"""
 <div style='
-    background: linear-gradient(90deg, #e6f4ff, #f0f8ff);
-    padding: 25px;
+     background: linear-gradient(90deg, #0f172a, #1e3a8a);
+    padding: 50px;
     border-radius: 20px;
     text-align: center;
-    margin-bottom: 25px;
+    color: white;
+    margin-bottom: 40px;
 '>
-    <h1>SRDN SmartLearn</h1>
-    <h3>{header_text}</h3>
+    <h1 style='font-size: 48px; margin-bottom:10px;'>EduVeda</h1>
+    <h2 style='font-weight: 400;'>The Smart Way to Learn</h2>
+    <p style='margin-top:15px; font-size:18px;'>
+        AI-Powered CBSE Learning Companion for Grades 3–8
+    </p>
 </div>
 """, unsafe_allow_html=True)
 
