@@ -4,7 +4,7 @@ from openai import OpenAI
 # -----------------------------------
 # PAGE CONFIG
 # -----------------------------------
-st.set_page_config(page_title="SRDN SmartLearn", page_icon="📘")
+st.set_page_config(page_title="EduVeda SmartLearn", page_icon="📘")
 st.markdown("""
 <style>
 
@@ -55,6 +55,32 @@ st.markdown("""
 }
 
 </style>
+
+            /* Make text area label white */
+label {
+    color: white !important;
+    font-weight: 500;
+}
+
+/* Make input text white */
+textarea {
+    color: white !important;
+}
+
+/* Make text area background semi-transparent */
+textarea {
+    background-color: rgba(255,255,255,0.08) !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+/* Placeholder text lighter */
+textarea::placeholder {
+    color: rgba(255,255,255,0.6) !important;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 <!-- Floating Symbols -->
 <div class="floating-symbol symbol1">EcMC2</div>
