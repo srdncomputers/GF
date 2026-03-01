@@ -8,6 +8,26 @@ st.set_page_config(page_title="EduVeda SmartLearn", page_icon="📘")
 st.markdown("""
 <style>
 
+/* Remove white top padding area */
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
+}
+
+/* Remove extra top header spacing */
+header[data-testid="stHeader"] {
+    background: transparent;
+}
+
+/* Remove top white toolbar area */
+div[data-testid="stToolbar"] {
+    background: transparent;
+}
+
+/* Remove default block container padding */
+.block-container {
+    padding-top: 2rem !important;
+}
+
 /* ===== Premium Background ===== */
 .stApp {
     background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
