@@ -93,31 +93,24 @@ div[data-testid="stToolbar"] {
 st.markdown("""
 <style>
 
-st.markdown("""
-<style>
 
-/* ===== TextArea Styling ===== */
-[data-testid="stTextArea"] textarea {
-    background: rgba(15, 23, 42, 0.6) !important;
+/* ===== Force TextArea Label White ===== */
+[data-testid="stTextArea"] > label {
     color: white !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
-    backdrop-filter: blur(8px);
+    font-weight: 600 !important;
 }
 
-/* Placeholder color */
-[data-testid="stTextArea"] textarea::placeholder {
-    color: rgba(255,255,255,0.6) !important;
-}
-
-/* Label white */
-[data-testid="stTextArea"] label,
 [data-testid="stTextArea"] label p {
     color: white !important;
 }
 
-</style>
-""", unsafe_allow_html=True)
+[data-testid="stTextArea"] textarea {
+    color: white !important;
+}
+
+[data-testid="stTextArea"] textarea::placeholder {
+    color: rgba(255,255,255,0.6) !important;
+}
 
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
