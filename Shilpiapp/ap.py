@@ -102,23 +102,19 @@ st.markdown("""
     backdrop-filter: blur(8px);
 }
 
-/* ===== Force TextArea Label White ===== */
-[data-testid="stTextArea"] > label {
-    color: white !important;
-    font-weight: 600 !important;
+/* Placeholder color */
+[data-testid="stTextArea"] textarea::placeholder {
+    color: rgba(255,255,255,0.6) !important;
 }
 
+/* Label white */
+[data-testid="stTextArea"] label,
 [data-testid="stTextArea"] label p {
     color: white !important;
 }
 
-[data-testid="stTextArea"] textarea {
-    color: white !important;
-}
-
-[data-testid="stTextArea"] textarea::placeholder {
-    color: rgba(255,255,255,0.6) !important;
-}
+</style>
+""", unsafe_allow_html=True)
 
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
