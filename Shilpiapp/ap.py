@@ -57,7 +57,7 @@ st.markdown("""
 </style>
 
 <!-- Floating Symbols -->
-<div class="floating-symbol symbol1">∑</div>
+<div class="floating-symbol symbol1">EcMC2</div>
 <div class="floating-symbol symbol2">π</div>
 <div class="floating-symbol symbol3">⚛</div>
 <div class="floating-symbol symbol4">🌍</div>
@@ -140,16 +140,9 @@ with st.sidebar:
 # -----------------------------------
 header_text = f"{grade} – {subject} | {mode}"
 
-st.markdown(f"""
-<div style='
-     background: linear-gradient(90deg, #0f172a, #1e3a8a);
-    padding: 50px;
-    border-radius: 20px;
-    text-align: center;
-    color: white;
-    margin-bottom: 40px;
-'>
-    <h1 style='font-size: 48px; margin-bottom:10px;'>EduVeda</h1>
+st.markdown("""
+<div class="hero-card">
+    <h1 style='font-size: 52px; margin-bottom:10px;'>EduVeda</h1>
     <h2 style='font-weight: 400;'>The Smart Way to Learn</h2>
     <p style='margin-top:15px; font-size:18px;'>
         AI-Powered CBSE Learning Companion for Grades 3–8
