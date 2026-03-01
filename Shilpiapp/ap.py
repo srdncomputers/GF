@@ -5,6 +5,67 @@ from openai import OpenAI
 # PAGE CONFIG
 # -----------------------------------
 st.set_page_config(page_title="SRDN SmartLearn", page_icon="📘")
+st.markdown("""
+<style>
+
+/* ===== Premium Background ===== */
+.stApp {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
+    background-attachment: fixed;
+    overflow: hidden;
+}
+
+/* ===== Floating Symbols Container ===== */
+.floating-symbol {
+    position: fixed;
+    font-size: 28px;
+    opacity: 0.08;
+    animation: float 20s infinite linear;
+    color: white;
+    z-index: 0;
+}
+
+@keyframes float {
+    0% { transform: translateY(100vh) rotate(0deg); }
+    100% { transform: translateY(-10vh) rotate(360deg); }
+}
+
+/* Different positions */
+.symbol1 { left: 5%; animation-duration: 25s; }
+.symbol2 { left: 15%; animation-duration: 18s; }
+.symbol3 { left: 25%; animation-duration: 22s; }
+.symbol4 { left: 40%; animation-duration: 30s; }
+.symbol5 { left: 55%; animation-duration: 27s; }
+.symbol6 { left: 70%; animation-duration: 19s; }
+.symbol7 { left: 85%; animation-duration: 24s; }
+
+/* Glass Hero */
+.hero-card {
+    backdrop-filter: blur(18px);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 60px;
+    border-radius: 25px;
+    text-align: center;
+    color: white;
+    margin-bottom: 50px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 10;
+}
+
+</style>
+
+<!-- Floating Symbols -->
+<div class="floating-symbol symbol1">∑</div>
+<div class="floating-symbol symbol2">π</div>
+<div class="floating-symbol symbol3">⚛</div>
+<div class="floating-symbol symbol4">🌍</div>
+<div class="floating-symbol symbol5">📜</div>
+<div class="floating-symbol symbol6">√</div>
+<div class="floating-symbol symbol7">📚</div>
+
+""", unsafe_allow_html=True)
 
 # -----------------------------------
 # STYLING
@@ -57,7 +118,7 @@ except Exception as e:
 # SIDEBAR
 # -----------------------------------
 with st.sidebar:
-    st.title("📘 SRDN SmartLearn")
+    st.title("📘 EduVeda SmartLearn")
 
     grade = st.selectbox(
         "Select Grade",
