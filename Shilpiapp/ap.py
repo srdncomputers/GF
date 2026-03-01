@@ -93,6 +93,15 @@ div[data-testid="stToolbar"] {
 st.markdown("""
 <style>
 
+/* ===== TextArea Styling ===== */
+[data-testid="stTextArea"] textarea {
+    background: rgba(15, 23, 42, 0.6) !important;
+    color: white !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    backdrop-filter: blur(8px);
+}
+
 /* ===== Force TextArea Label White ===== */
 [data-testid="stTextArea"] > label {
     color: white !important;
