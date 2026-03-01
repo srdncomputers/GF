@@ -94,23 +94,27 @@ st.markdown("""
 <style>
 
 
-/* ===== Force TextArea Label White ===== */
-[data-testid="stTextArea"] > label {
-    color: white !important;
-    font-weight: 600 !important;
-}
-
+/* ===== Label White ===== */
+[data-testid="stTextArea"] label,
 [data-testid="stTextArea"] label p {
     color: white !important;
 }
 
+/* ===== Textarea Background Light ===== */
 [data-testid="stTextArea"] textarea {
-    color: white !important;
+    background-color: #f1f5f9 !important;  /* light grey */
+    color: black !important;              /* typed text black */
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
 }
 
+/* Placeholder text slightly grey */
 [data-testid="stTextArea"] textarea::placeholder {
-    color: rgba(255,255,255,0.6) !important;
+    color: #6b7280 !important;
 }
+
+</style>
+""", unsafe_allow_html=True
 
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
