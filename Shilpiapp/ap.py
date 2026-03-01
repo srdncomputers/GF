@@ -73,22 +73,25 @@ st.markdown("""
 st.markdown("""
 <style>
 
-/* Make text area label white */
-div[data-testid="stTextArea"] label {
+/* ===== Force TextArea Label White ===== */
+[data-testid="stTextArea"] > label {
     color: white !important;
-    font-weight: 600;
+    font-weight: 600 !important;
 }
 
-/* Make text inside textarea white */
-div[data-testid="stTextArea"] textarea {
+/* Sometimes Streamlit wraps label inside div */
+[data-testid="stTextArea"] label p {
     color: white !important;
 }
 
-/* Optional: Make textarea background glass style */
-div[data-testid="stTextArea"] textarea {
-    background-color: rgba(255,255,255,0.08) !important;
-    border-radius: 12px !important;
-    border: 1px solid rgba(255,255,255,0.2) !important;
+/* Text inside textarea */
+[data-testid="stTextArea"] textarea {
+    color: white !important;
+}
+
+/* Placeholder text */
+[data-testid="stTextArea"] textarea::placeholder {
+    color: rgba(255,255,255,0.6) !important;
 }
 
 </style>
