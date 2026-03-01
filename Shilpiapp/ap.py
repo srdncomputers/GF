@@ -100,6 +100,11 @@ st.markdown("""
     font-weight: 600 !important;
 }
 
+/* Only change typed text color to black */
+[data-testid="stTextArea"] textarea {
+    color: black !important;
+}
+                                    
 [data-testid="stTextArea"] label p {
     color: white !important;
 }
