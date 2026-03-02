@@ -184,7 +184,16 @@ section[data-testid="stSidebar"] div[data-baseweb="select"] span {
 div[role="listbox"] div {
     color: black !important;
 }
-            
+
+/* ===== Sidebar Radio Text White ===== */
+section[data-testid="stSidebar"] div[data-baseweb="radio"] label {
+    color: white !important;
+}
+
+/* Also force span inside radio */
+section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
+    color: white !important;
+}                        
 </style>
 """, unsafe_allow_html=True)
 
