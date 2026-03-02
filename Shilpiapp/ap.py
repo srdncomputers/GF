@@ -32,7 +32,12 @@ div[data-testid="stToolbar"] {
 div[data-testid="stTextArea"] textarea {
     color: black !important;
 }
-                        
+
+/* Fix Safari / Chrome internal override */
+div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
+    color: #6b7280 !important;
+}
+                                                
 /* ===== Premium Background ===== */
 .stApp {
     background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
