@@ -205,6 +205,18 @@ div[role="listbox"] div {
     color: black !important;
 }
 
+/* ===== Make top-right toolbar icons white ===== */
+[data-testid="stToolbar"] button,
+[data-testid="stToolbar"] svg {
+    color: white !important;
+    fill: white !important;
+}
+
+/* Also fix share text */
+[data-testid="stToolbar"] {
+    color: white !important;
+}
+            
 </style>
 """, unsafe_allow_html=True)
 
