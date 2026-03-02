@@ -217,6 +217,16 @@ div[role="listbox"] div {
 [data-testid="stToolbar"] button:hover {
     background-color: transparent !important;
 }
+
+/* ===== Make main content text white ===== */
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stMarkdownContainer"] li,
+[data-testid="stMarkdownContainer"] h1,
+[data-testid="stMarkdownContainer"] h2,
+[data-testid="stMarkdownContainer"] h3,
+[data-testid="stMarkdownContainer"] h4 {
+    color: white !important;
+}
             
 </style>
 """, unsafe_allow_html=True)
