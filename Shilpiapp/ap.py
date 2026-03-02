@@ -375,7 +375,8 @@ if mode == "Concept Learning":
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-    if prompt := st.chat_input("Ask your concept question..."):
+    prompt := st.chat_input("Ask your concept question...")
+    if st.button("Explain Concept") and prompt:
 
         unsafe_words = ["violence", "kill", "adult", "sex", "weapon", "drugs"]
         if any(word in prompt.lower() for word in unsafe_words):
