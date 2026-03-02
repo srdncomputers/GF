@@ -80,7 +80,7 @@ div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
 
 /* Glass Hero */
 .hero-card {
-    width: 70%;
+    width: 80%;
     backdrop-filter: blur(18px);
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255,255,255,0.2);
