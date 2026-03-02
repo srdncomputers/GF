@@ -174,16 +174,16 @@ section[data-testid="stSidebar"] label {
 /* ===== FIX DROPDOWN TEXT TO BLACK ===== */
 
 section[data-testid="stSidebar"] select {
-    color: black !important;
+    color: white !important;
     background-color: #f1f5f9 !important;
 }
 
 section[data-testid="stSidebar"] div[data-baseweb="select"] span {
-    color: black !important;
+    color: white !important;
 }
 
 div[role="listbox"] div {
-    color: black !important;
+    color: white !important;
 }
             
 </style>
