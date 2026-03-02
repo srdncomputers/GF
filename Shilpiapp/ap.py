@@ -122,10 +122,6 @@ st.markdown("""
     color: rgba(255,255,255,0.6) !important;
 }
 
-/* ===== Sidebar Radio Text White ===== */
-section[data-testid="stSidebar"] div[role="radiogroup"] label {
-    color: white !important;
-}            
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
 /* ============================= */
@@ -189,7 +185,11 @@ section[data-testid="stSidebar"] div[data-baseweb="select"] span {
 div[role="listbox"] div {
     color: black !important;
 }
-            
+
+/* ===== Sidebar Radio Text White ===== */
+section[data-testid="stSidebar"] div[role="radiogroup"] label {
+    color: white !important;
+}                        
 </style>
 """, unsafe_allow_html=True)
 
