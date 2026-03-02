@@ -1,26 +1,6 @@
 import streamlit as st
 from openai import OpenAI
 
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
-
-messages=[{"role": "user", "content": prompt}]
-
-st.session_state.chat_history.append(
-    {"role": "user", "content": prompt}
-)
-
-response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=st.session_state.chat_history,
-    temperature=0.6
-)
-
-answer = response.choices[0].message.content
-
-st.session_state.chat_history.append(
-    {"role": "assistant", "content": answer}
-)
 
 # -----------------------------------
 # PAGE CONFIG
@@ -365,11 +345,15 @@ st.markdown("""
 # -----------------------------------
 # SESSION STATE
 # -----------------------------------
+
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "last_concept_question" not in st.session_state:
     st.session_state.last_concept_question = None
+
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
 
 def get_math_template(grade):
 
@@ -449,9 +433,25 @@ if mode == "Homework Help":
 
             response = client.chat.completions.create(
                 model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.6
-            )
+
+# Add user message to history
+st.session_state.chat_history.append(
+    {"role": "user", "content": prompt}
+)
+
+# Send full conversation history
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=st.session_state.chat_history,
+    temperature=0.6
+)
+
+answer = response.choices[0].message.content
+
+# Store assistant reply
+st.session_state.chat_history.append(
+    {"role": "assistant", "content": answer}
+)
 
         st.markdown("### 📘 Solution")
         st.markdown(response.choices[0].message.content)
