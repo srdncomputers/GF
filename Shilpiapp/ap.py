@@ -85,12 +85,6 @@ div[data-testid="stToolbar"] {
 <div class="floating-symbol symbol6">√</div>
 <div class="floating-symbol symbol7">📚</div>
 
-/* Only target the homework textarea input text */
-div[data-testid="stTextArea"] textarea {
-    color: black !important;
-}
-
-</style>                                    
 """, unsafe_allow_html=True)
 
 # -----------------------------------
