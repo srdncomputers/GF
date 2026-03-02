@@ -352,8 +352,12 @@ if "messages" not in st.session_state:
 if "last_concept_question" not in st.session_state:
     st.session_state.last_concept_question = None
 
-if "chat_history" not in st.session_state:
-    st.session_state.chat_history = st.session_state.chat_history[-10:]
+st.session_state.chat_history.append(
+    {"role": "assistant", "content": answer}
+)
+
+# Limit memory size
+st.session_state.chat_history = st.session_state.chat_history[-10:]
 
 def get_math_template(grade):
 
