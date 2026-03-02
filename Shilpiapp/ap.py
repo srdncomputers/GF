@@ -104,6 +104,7 @@ div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
     <span>📐</span>
     <span>📖</span>
     <span>⚛️</span>
+    <span>🕉️</span>
 </div>  
 
 """, unsafe_allow_html=True)
