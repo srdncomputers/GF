@@ -173,15 +173,18 @@ section[data-testid="stSidebar"] label {
 
 /* ===== FIX DROPDOWN TEXT TO BLACK ===== */
 
-section[data-testid="stSidebar"] select {
-    color: black !important;
-    background-color: #f1f5f9 !important;
-}
-
+/* Dropdown selected value */
 section[data-testid="stSidebar"] div[data-baseweb="select"] span {
     color: black !important;
 }
 
+/* Dropdown background */
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    background-color: #f1f5f9 !important;
+    border-radius: 10px !important;
+}
+
+/* Dropdown menu options */
 div[role="listbox"] div {
     color: black !important;
 }
