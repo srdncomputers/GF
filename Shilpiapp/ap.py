@@ -353,7 +353,7 @@ if "last_concept_question" not in st.session_state:
     st.session_state.last_concept_question = None
 
 if "chat_history" not in st.session_state:
-    st.session_state.chat_history = []
+    st.session_state.chat_history = st.session_state.chat_history[-10:]
 
 def get_math_template(grade):
 
@@ -387,7 +387,6 @@ def get_math_template(grade):
         Use proper mathematical terminology.
         Show reasoning clearly.
         """
-
 # ===================================
 # HOMEWORK HELPER MODE
 # ===================================
@@ -399,7 +398,7 @@ if mode == "Homework Help":
 
         with st.spinner("Solving step-by-step..."):
 
-            # Only apply adaptive template for Math
+            # Build prompt
             if subject == "Math":
 
                 template = get_math_template(grade)
@@ -419,7 +418,6 @@ if mode == "Homework Help":
                 """
 
             else:
-                # For non-math subjects (temporary basic structure)
                 prompt = f"""
                 You are a CBSE teacher helping a {grade} student in {subject}.
 
@@ -431,27 +429,26 @@ if mode == "Homework Help":
                 Ask one small follow-up question.
                 """
 
-                # Add user message to history
-                st.session_state.chat_history.append(
-                    {"role": "user", "content": prompt}
-                )
+            # 🔥 MEMORY ENABLED HERE FOR ALL SUBJECTS
 
-                # Send full conversation history
-                response = client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=st.session_state.chat_history,
-                    temperature=0.6
-                )
+            st.session_state.chat_history.append(
+                {"role": "user", "content": prompt}
+            )
 
-                answer = response.choices[0].message.content
+            response = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=st.session_state.chat_history,
+                temperature=0.6
+            )
 
-                # Store assistant reply
-                st.session_state.chat_history.append(
-                    {"role": "assistant", "content": answer}
-                )
+            answer = response.choices[0].message.content
 
-                        st.markdown("### 📘 Solution")
-                        st.markdown(response.choices[0].message.content)
+            st.session_state.chat_history.append(
+                {"role": "assistant", "content": answer}
+            )
+
+        st.markdown("### 📘 Solution")
+        st.markdown(answer)
 
 # ===================================
 # CONCEPT LEARNING MODE
