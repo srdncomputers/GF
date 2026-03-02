@@ -227,7 +227,19 @@ div[role="listbox"] div {
 [data-testid="stMarkdownContainer"] h4 {
     color: white !important;
 }
-            
+
+/* ===== Make Button Loading Spinner White ===== */
+.stButton button svg {
+    stroke: white !important;
+    fill: white !important;
+}
+
+/* Some versions use path */
+.stButton button svg path {
+    stroke: white !important;
+    fill: white !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
