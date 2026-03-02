@@ -100,26 +100,23 @@ div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
 # -----------------------------------
 # STYLING
 # -----------------------------------
-
 st.markdown("""
 <style>
- 
-/* ===== Force TextArea Label White ===== */
-[data-testid="stTextArea"] > label {
-    color: white !important;
-    font-weight: 600 !important;
-}
-            
-[data-testid="stTextArea"] label p {
-    color: white !important;
+
+/* ============================= */
+/* GLOBAL BACKGROUND */
+/* ============================= */
+
+html, body, [data-testid="stAppViewContainer"] {
+    background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81) !important;
 }
 
-[data-testid="stTextArea"] textarea {
-    color: white !important;
+header {
+    background: transparent !important;
 }
 
-[data-testid="stTextArea"] textarea::placeholder {
-    color: rgba(255,255,255,0.6) !important;
+[data-testid="stToolbar"] {
+    background: transparent !important;
 }
 
 /* ============================= */
@@ -143,6 +140,29 @@ st.markdown("""
 }
 
 /* ============================= */
+/* TEXTAREA (HOMEWORK INPUT) */
+/* ============================= */
+
+/* Label white */
+[data-testid="stTextArea"] label,
+[data-testid="stTextArea"] label p {
+    color: white !important;
+}
+
+/* Typed text BLACK */
+[data-testid="stTextArea"] textarea {
+    color: black !important;
+    background-color: #f1f5f9 !important;
+    border-radius: 12px !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+/* Placeholder */
+[data-testid="stTextArea"] textarea::placeholder {
+    color: #6b7280 !important;
+}
+
+/* ============================= */
 /* SIDEBAR PREMIUM GLASS STYLE */
 /* ============================= */
 
@@ -152,26 +172,39 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.1);
 }
 
-section[data-testid="stSidebar"] {
-    background: rgba(15, 23, 42, 0.85);
-    backdrop-filter: blur(15px);
-    border-right: 1px solid rgba(255,255,255,0.1);
-}
-/* ===== FIX DROPDOWN TEXT TO BLACK ===== */
-
-section[data-testid="stSidebar"] select {
-    color: black !important;
-    background-color: #f1f5f9 !important;
+/* Sidebar titles */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3 {
+    color: white !important;
 }
 
+/* Sidebar field labels (Select Grade, Subject, Learning Mode) */
+section[data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p {
+    color: white !important;
+}
+
+/* Radio button text */
+section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
+    color: white !important;
+}
+
+/* Dropdown selected value BLACK */
 section[data-testid="stSidebar"] div[data-baseweb="select"] span {
     color: black !important;
 }
 
+/* Dropdown background */
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    background-color: #f1f5f9 !important;
+    border-radius: 10px !important;
+}
+
+/* Dropdown menu items */
 div[role="listbox"] div {
     color: black !important;
 }
-            
+
 </style>
 """, unsafe_allow_html=True)
 
