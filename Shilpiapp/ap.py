@@ -431,27 +431,27 @@ if mode == "Homework Help":
                 Ask one small follow-up question.
                 """
 
-# Add user message to history
-st.session_state.chat_history.append(
-    {"role": "user", "content": prompt}
-)
+                # Add user message to history
+                st.session_state.chat_history.append(
+                    {"role": "user", "content": prompt}
+                )
 
-# Send full conversation history
-response = client.chat.completions.create(
-    model="gpt-4o-mini",
-    messages=st.session_state.chat_history,
-    temperature=0.6
-)
+                # Send full conversation history
+                response = client.chat.completions.create(
+                    model="gpt-4o-mini",
+                    messages=st.session_state.chat_history,
+                    temperature=0.6
+                )
 
-answer = response.choices[0].message.content
+                answer = response.choices[0].message.content
 
-# Store assistant reply
-st.session_state.chat_history.append(
-    {"role": "assistant", "content": answer}
-)
+                # Store assistant reply
+                st.session_state.chat_history.append(
+                    {"role": "assistant", "content": answer}
+                )
 
-        st.markdown("### 📘 Solution")
-        st.markdown(response.choices[0].message.content)
+                        st.markdown("### 📘 Solution")
+                        st.markdown(response.choices[0].message.content)
 
 # ===================================
 # CONCEPT LEARNING MODE
