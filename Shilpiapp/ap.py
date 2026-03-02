@@ -80,15 +80,17 @@ div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
 
 /* Glass Hero */
 .hero-card {
-    width: 70%;
-    margin: 60px auto 40px auto;
-    padding: 45px 30px;   /* reduced padding */
-    border-radius: 24px;
-    background: rgba(255,255,255,0.08);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255,255,255,0.15);
-    box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+    backdrop-filter: blur(18px);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 20px;
+    border-radius: 25px;
     text-align: center;
+    color: white;
+    margin-bottom: 60px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.4);
+    position: relative;
+    z-index: 10;
 }
 
 </style>
