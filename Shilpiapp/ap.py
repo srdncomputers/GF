@@ -28,6 +28,11 @@ div[data-testid="stToolbar"] {
     padding-top: 2rem !important;
 }
 
+/* Only target the homework textarea input text */
+div[data-testid="stTextArea"] textarea {
+    color: black !important;
+}
+                        
 /* ===== Premium Background ===== */
 .stApp {
     background: linear-gradient(135deg, #0f172a, #1e3a8a, #312e81);
