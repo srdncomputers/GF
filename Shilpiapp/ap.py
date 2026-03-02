@@ -152,38 +152,29 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Sidebar titles */
-section[data-testid="stSidebar"] h1,
-section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3 {
-    color: white !important;
+section[data-testid="stSidebar"] {
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(15px);
+    border-right: 1px solid rgba(255,255,255,0.1);
+}
+/* ===== FIX DROPDOWN TEXT TO BLACK ===== */
+
+section[data-testid="stSidebar"] select {
+    color: black !important;
+    background-color: #f1f5f9 !important;
 }
 
-/* Sidebar field labels (Select Grade, Select Subject, Learning Mode) */
-section[data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p {
-    color: white !important;
-}
-
-/* Radio button text */
-section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
-    color: white !important;
-}
-
-/* Dropdown selected value */
 section[data-testid="stSidebar"] div[data-baseweb="select"] span {
     color: black !important;
 }
 
-/* Dropdown background */
-section[data-testid="stSidebar"] div[data-baseweb="select"] {
-    background-color: #f1f5f9 !important;
-    border-radius: 10px !important;
-}
-
-/* Dropdown menu items */
 div[role="listbox"] div {
     color: black !important;
 }
+            
+</style>
+""", unsafe_allow_html=True)
+
 # -----------------------------------
 # FUNCTIONS
 # -----------------------------------
