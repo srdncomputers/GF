@@ -46,28 +46,37 @@ div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
 }
 
 /* ===== Floating Symbols Container ===== */
-.floating-symbol {
+.floating-symbols {
     position: fixed;
-    font-size: 28px;
-    opacity: 0.08;
-    animation: float 20s infinite linear;
-    color: white;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
     z-index: 0;
+    overflow: hidden;
 }
-
-@keyframes float {
-    0% { transform: translateY(100vh) rotate(0deg); }
-    100% { transform: translateY(-10vh) rotate(360deg); }
+            
+.floating-symbols span {
+    position: absolute;
+    font-size: 42px;          /* BIGGER SIZE */
+    opacity: 0.15;            /* slightly more visible */
+    animation: float 18s linear infinite;
+    color: white;
 }
 
 /* Different positions */
-.symbol1 { left: 5%; animation-duration: 25s; }
-.symbol2 { left: 15%; animation-duration: 18s; }
-.symbol3 { left: 25%; animation-duration: 22s; }
-.symbol4 { left: 40%; animation-duration: 30s; }
-.symbol5 { left: 55%; animation-duration: 27s; }
-.symbol6 { left: 70%; animation-duration: 19s; }
-.symbol7 { left: 85%; animation-duration: 24s; }
+.floating-symbols span:nth-child(1) { left: 10%; animation-duration: 20s; }
+.floating-symbols span:nth-child(2) { left: 25%; animation-duration: 25s; }
+.floating-symbols span:nth-child(3) { left: 40%; animation-duration: 22s; }
+.floating-symbols span:nth-child(4) { left: 60%; animation-duration: 28s; }
+.floating-symbols span:nth-child(5) { left: 75%; animation-duration: 24s; }
+.floating-symbols span:nth-child(6) { left: 90%; animation-duration: 30s; }
+
+@keyframes float {
+    0%   { transform: translateY(100vh) rotate(0deg); }
+    100% { transform: translateY(-10vh) rotate(360deg); }
+}
 
 /* Glass Hero */
 .hero-card {
