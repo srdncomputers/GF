@@ -159,10 +159,6 @@ section[data-testid="stSidebar"] h3,
 section[data-testid="stSidebar"] label {
     color: white !important;
 }
-/* ===== Sidebar Radio Text White ===== */
-section[data-testid="stSidebar"] div[role="radiogroup"] label {
-    color: white !important;
-}
 section[data-testid="stSidebar"] select {
     background-color: rgba(255,255,255,0.08) !important;
     color: white !important;
