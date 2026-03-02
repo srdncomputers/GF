@@ -167,6 +167,7 @@ section[data-testid="stSidebar"] label {
     color: white !important;
 }
 
+/* ===== Sidebar Selectbox Text Black ===== */
 section[data-testid="stSidebar"] select {
     color: black !important;
     background-color: #f1f5f9 !important;
