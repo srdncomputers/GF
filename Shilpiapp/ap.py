@@ -130,6 +130,16 @@ header {
     background: transparent !important;
 }
 
+a {
+    color: #93c5fd !important;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(147,197,253,0.7);
+}            
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
 /* ============================= */
