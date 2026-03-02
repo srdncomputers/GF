@@ -153,12 +153,12 @@ section[data-testid="stSidebar"] {
 }
 
 section[data-testid="stSidebar"] * {
-    color: white !important;
+    color: black !important;
 }
 
 section[data-testid="stSidebar"] select {
     background-color: rgba(255,255,255,0.08) !important;
-    color: black !important;
+    color: white !important;
     border-radius: 10px;
     border: 1px solid rgba(255,255,255,0.2);
 }
