@@ -431,9 +431,6 @@ if mode == "Homework Help":
                 Ask one small follow-up question.
                 """
 
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-
 # Add user message to history
 st.session_state.chat_history.append(
     {"role": "user", "content": prompt}
