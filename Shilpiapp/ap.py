@@ -152,15 +152,30 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.1);
 }
 
-/* Sidebar titles only */
-section[data-testid="stSidebar"] h1,
-section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3 {
+/* ===== Sidebar Radio Text White ===== */
+section[data-testid="stSidebar"] div[data-baseweb="radio"] label {
     color: white !important;
 }
 
-/* Radio text */
+/* Also force span inside radio */
 section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
+    color: white !important;
+}            
+/* Sidebar text (titles & labels) white only */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3,
+section[data-testid="stSidebar"] label {
+    color: white !important;
+}
+section[data-testid="stSidebar"] select {
+    background-color: rgba(255,255,255,0.08) !important;
+    color: white !important;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+section[data-testid="stSidebar"] label {
     color: white !important;
 }
 
