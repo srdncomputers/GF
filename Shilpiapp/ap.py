@@ -83,12 +83,12 @@ div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
     backdrop-filter: blur(18px);
     background: rgba(255, 255, 255, 0.08);
     border: 1px solid rgba(255,255,255,0.2);
-    padding: 30px;
+    padding: 20px;
     border-radius: 25px;
     text-align: center;
     color: white;
-    margin-bottom: 30px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    margin-bottom: 60px;
+    box-shadow: 0 0 40px rgba(0,0,0,0.4);
     position: relative;
     z-index: 10;
 }
