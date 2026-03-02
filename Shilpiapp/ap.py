@@ -152,8 +152,12 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.1);
 }
 
-section[data-testid="stSidebar"] * {
-    color: black !important;
+/* Sidebar text (titles & labels) white only */
+section[data-testid="stSidebar"] h1,
+section[data-testid="stSidebar"] h2,
+section[data-testid="stSidebar"] h3,
+section[data-testid="stSidebar"] label {
+    color: white !important;
 }
 
 section[data-testid="stSidebar"] select {
