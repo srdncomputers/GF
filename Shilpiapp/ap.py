@@ -152,40 +152,29 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.1);
 }
 
+/* Sidebar text white */
 section[data-testid="stSidebar"] * {
     color: white !important;
 }
 
-section[data-testid="stSidebar"] select {
-    background-color: rgba(255,255,255,0.08) !important;
-    color: white !important;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.2);
-}
+/* ===== FIX DROPDOWN TEXT TO BLACK ===== */
 
-section[data-testid="stSidebar"] label {
-    color: white !important;
-}
-
-/* ===== Sidebar Selectbox Text Black ===== */
 section[data-testid="stSidebar"] select {
     color: black !important;
     background-color: #f1f5f9 !important;
 }
 
-/* Selected value inside custom select */
 section[data-testid="stSidebar"] div[data-baseweb="select"] span {
     color: black !important;
 }
 
-/* Dropdown menu options */
 div[role="listbox"] div {
     color: black !important;
 }
-            
+
 </style>
 """, unsafe_allow_html=True)
-
+            
 # -----------------------------------
 # FUNCTIONS
 # -----------------------------------
