@@ -167,6 +167,20 @@ section[data-testid="stSidebar"] label {
     color: white !important;
 }
 
+section[data-testid="stSidebar"] select {
+    color: black !important;
+    background-color: #f1f5f9 !important;
+}
+
+/* Selected value inside custom select */
+section[data-testid="stSidebar"] div[data-baseweb="select"] span {
+    color: black !important;
+}
+
+/* Dropdown menu options */
+div[role="listbox"] div {
+    color: black !important;
+}            
 </style>
 """, unsafe_allow_html=True)
 
