@@ -1,6 +1,27 @@
 import streamlit as st
 from openai import OpenAI
 
+if "chat_history" not in st.session_state:
+    st.session_state.chat_history = []
+
+messages=[{"role": "user", "content": prompt}]
+
+st.session_state.chat_history.append(
+    {"role": "user", "content": prompt}
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=st.session_state.chat_history,
+    temperature=0.6
+)
+
+answer = response.choices[0].message.content
+
+st.session_state.chat_history.append(
+    {"role": "assistant", "content": answer}
+)
+
 # -----------------------------------
 # PAGE CONFIG
 # -----------------------------------
