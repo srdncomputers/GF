@@ -139,6 +139,19 @@ a {
 a:hover {
     color: #ffffff !important;
     text-shadow: 0 0 8px rgba(147,197,253,0.7);
+}
+
+/* ===== Make All Links White ===== */
+a {
+    color: #ffffff !important;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
+/* Hover effect */
+a:hover {
+    color: #60a5fa !important;
+    text-decoration: none;
 }            
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
