@@ -96,12 +96,8 @@ div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
 </style>
 
 <!-- Floating Symbols -->
-<div class="floating-symbol symbol1">EcMC2</div>
-<div class="floating-symbol symbol2">π</div>
-<div class="floating-symbol symbol3">⚛</div>
 <div class="floating-symbol symbol4">🌍</div>
 <div class="floating-symbol symbol5">📜</div>
-<div class="floating-symbol symbol6">√</div>
 <div class="floating-symbol symbol7">📚</div>
             
 <div class="floating-symbols">
@@ -111,7 +107,7 @@ div[data-testid="stTextArea"] textarea::-webkit-input-placeholder {
     <span>📐</span>
     <span>📖</span>
     <span>⚛️</span>
-</div>
+</div>  
 
 """, unsafe_allow_html=True)
 
