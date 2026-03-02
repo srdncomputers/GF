@@ -122,6 +122,10 @@ st.markdown("""
     color: rgba(255,255,255,0.6) !important;
 }
 
+/* ===== Sidebar Radio Text White ===== */
+section[data-testid="stSidebar"] div[role="radiogroup"] label {
+    color: white !important;
+}            
 /* ============================= */
 /* PREMIUM BUTTON STYLE */
 /* ============================= */
@@ -238,10 +242,6 @@ with st.sidebar:
         "Learning Mode",
         ["Homework Help", "Concept Learning", "Doubt Solver"]
     )
-/* ===== Sidebar Radio Text White ===== */
-section[data-testid="stSidebar"] div[role="radiogroup"] label {
-    color: white !important;
-}
 # -----------------------------------
 # HEADER
 # -----------------------------------
