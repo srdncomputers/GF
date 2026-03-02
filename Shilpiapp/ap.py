@@ -205,15 +205,16 @@ div[role="listbox"] div {
     color: black !important;
 }
 
-/* ===== Make top-right toolbar icons white ===== */
-[data-testid="stToolbar"] button,
+/* ===== Force ALL Toolbar Icons White ===== */
+[data-testid="stToolbar"] *,
 [data-testid="stToolbar"] svg,
-[data-testid="stToolbar"] span {
+[data-testid="stToolbar"] svg path {
     color: white !important;
     fill: white !important;
+    stroke: white !important;
 }
 
-/* Remove hover dark background */
+/* Remove hover background */
 [data-testid="stToolbar"] button:hover {
     background-color: transparent !important;
 }
