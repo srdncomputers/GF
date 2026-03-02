@@ -159,7 +159,7 @@ section[data-testid="stSidebar"] h3,
 section[data-testid="stSidebar"] label {
     color: white !important;
 }
-/* Radio text */
+/* ===== Sidebar Radio Text White ===== */
 section[data-testid="stSidebar"] div[role="radiogroup"] label {
     color: white !important;
 }
