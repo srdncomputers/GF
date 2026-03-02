@@ -158,13 +158,13 @@ section[data-testid="stSidebar"] * {
 
 section[data-testid="stSidebar"] select {
     background-color: rgba(255,255,255,0.08) !important;
-    color: white !important;
+    color: black !important;
     border-radius: 10px;
     border: 1px solid rgba(255,255,255,0.2);
 }
 
 section[data-testid="stSidebar"] label {
-    color: blackwh !important;
+    color: white !important;
 }
 
 /* ===== FIX DROPDOWN TEXT TO BLACK ===== */
