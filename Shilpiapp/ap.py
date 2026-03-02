@@ -153,7 +153,7 @@ section[data-testid="stSidebar"] {
 }
 
 /* ===== Sidebar Radio Text White ===== */
-section[data-testid="stSidebar"] div[data-baseweb="radio"] label {
+section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
     color: white !important;
 }
 
@@ -164,8 +164,7 @@ section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
 /* Sidebar text (titles & labels) white only */
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
-section[data-testid="stSidebar"] h3,
-section[data-testid="stSidebar"] label {
+section[data-testid="stSidebar"] h3 {
     color: white !important;
 }
 section[data-testid="stSidebar"] select {
