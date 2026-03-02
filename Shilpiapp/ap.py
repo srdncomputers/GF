@@ -153,7 +153,7 @@ section[data-testid="stSidebar"] {
 }
 
 section[data-testid="stSidebar"] * {
-    color: black !important;
+    color: white !important;
 }
 
 section[data-testid="stSidebar"] select {
@@ -164,7 +164,7 @@ section[data-testid="stSidebar"] select {
 }
 
 section[data-testid="stSidebar"] label {
-    color: black !important;
+    color: blackwh !important;
 }
 
 /* ===== FIX DROPDOWN TEXT TO BLACK ===== */
