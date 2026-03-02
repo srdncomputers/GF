@@ -152,50 +152,38 @@ section[data-testid="stSidebar"] {
     border-right: 1px solid rgba(255,255,255,0.1);
 }
 
-/* ===== Sidebar Radio Text White ===== */
-section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
-    color: white !important;
-}
-
-/* Also force span inside radio */
-section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
-    color: white !important;
-}            
-/* Sidebar text (titles & labels) white only */
+/* Sidebar titles */
 section[data-testid="stSidebar"] h1,
 section[data-testid="stSidebar"] h2,
 section[data-testid="stSidebar"] h3 {
     color: white !important;
 }
-section[data-testid="stSidebar"] select {
-    background-color: rgba(255,255,255,0.08) !important;
-    color: white !important;
-    border-radius: 10px;
-    border: 1px solid rgba(255,255,255,0.2);
-}
 
-section[data-testid="stSidebar"] label {
+/* Sidebar field labels (Select Grade, Select Subject, Learning Mode) */
+section[data-testid="stSidebar"] div[data-testid="stMarkdownContainer"] p {
     color: white !important;
 }
 
-/* ===== FIX DROPDOWN TEXT TO BLACK ===== */
-
-section[data-testid="stSidebar"] select {
-    color: black !important;
-    background-color: #f1f5f9 !important;
+/* Radio button text */
+section[data-testid="stSidebar"] div[data-baseweb="radio"] span {
+    color: white !important;
 }
 
+/* Dropdown selected value */
 section[data-testid="stSidebar"] div[data-baseweb="select"] span {
     color: black !important;
 }
 
+/* Dropdown background */
+section[data-testid="stSidebar"] div[data-baseweb="select"] {
+    background-color: #f1f5f9 !important;
+    border-radius: 10px !important;
+}
+
+/* Dropdown menu items */
 div[role="listbox"] div {
     color: black !important;
 }
-            
-</style>
-""", unsafe_allow_html=True)
-
 # -----------------------------------
 # FUNCTIONS
 # -----------------------------------
