@@ -207,14 +207,15 @@ div[role="listbox"] div {
 
 /* ===== Make top-right toolbar icons white ===== */
 [data-testid="stToolbar"] button,
-[data-testid="stToolbar"] svg {
+[data-testid="stToolbar"] svg,
+[data-testid="stToolbar"] span {
     color: white !important;
     fill: white !important;
 }
 
-/* Also fix share text */
-[data-testid="stToolbar"] {
-    color: white !important;
+/* Remove hover dark background */
+[data-testid="stToolbar"] button:hover {
+    background-color: transparent !important;
 }
             
 </style>
