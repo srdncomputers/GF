@@ -2,3 +2,5 @@ streamlit
 google-generativeai
 openai
 streamlit-lottie
+streamlit>=1.32.0
+openai>=1.12.0
