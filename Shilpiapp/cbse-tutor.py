@@ -191,6 +191,20 @@ section.main > div {
 
 footer { visibility: hidden; }
 #MainMenu { visibility: hidden; }
+
+/* ── Fix white top bar ── */
+[data-testid="stHeader"],
+header[data-testid="stHeader"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-bottom: none !important;
+}
+[data-testid="stToolbar"] {
+    background: transparent !important;
+}
+/* Top decoration bar (the thin colored line) */
+[data-testid="stDecoration"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -234,9 +248,7 @@ if "streak"    not in st.session_state: st.session_state.streak    = 0
 with st.sidebar:
     st.markdown("## 🦉 Vidya Tutor")
 
-    if OPENAI_API_KEY:
-        st.success("✅ API Key loaded")
-    else:
+    if not OPENAI_API_KEY:
         st.error("❌ API Key missing!\nAdd OPENAI_API_KEY in Streamlit Secrets.")
 
     st.markdown("---")
