@@ -1,8 +1,9 @@
 import streamlit as st
 import json
-import os
 from datetime import datetime
 from openai import OpenAI
+import gspread
+from google.oauth2.service_account import Credentials
 
 # ── Page config ────────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -85,7 +86,6 @@ section.main > div {
     border-radius: 20px; padding: 4px 14px; font-size: 13px; font-weight: 700; margin-right: 8px;
 }
 
-/* Memory card */
 .memory-card {
     background: #f0f7ff; border: 1px solid #c8e0ff; border-radius: 14px;
     padding: 12px 16px; margin: 10px 0; font-size: 13px; color: #2d2d2d;
@@ -93,13 +93,11 @@ section.main > div {
 .memory-card b { color: #4a6fa5; }
 .memory-tag {
     display: inline-block; background: #e8f0fe; color: #4a6fa5;
-    border-radius: 10px; padding: 2px 10px; font-size: 12px;
-    font-weight: 700; margin: 2px 3px;
+    border-radius: 10px; padding: 2px 10px; font-size: 12px; font-weight: 700; margin: 2px 3px;
 }
-.memory-tag.weak { background: #fff0f0; color: #d63031; }
+.memory-tag.weak   { background: #fff0f0; color: #d63031; }
 .memory-tag.strong { background: #f0fff4; color: #00b894; }
 
-/* Chat bubbles */
 .user-msg {
     background: linear-gradient(135deg, #6C5CE7, #a29bfe); color: white;
     border-radius: 20px 20px 4px 20px; padding: 12px 16px;
@@ -114,7 +112,6 @@ section.main > div {
 }
 .msg-label { font-size: 11px; font-weight: 700; opacity: 0.6; margin-bottom: 4px; }
 
-/* Main input */
 .stTextInput > div > div > input {
     border-radius: 20px !important; border: 2px solid #e0d8ff !important;
     font-family: 'Nunito', sans-serif !important; font-size: 15px !important;
@@ -124,7 +121,6 @@ section.main > div {
     border-color: #6C5CE7 !important; box-shadow: 0 0 0 2px rgba(108,92,231,0.15) !important;
 }
 
-/* Send button */
 .stForm .stButton > button {
     background: linear-gradient(135deg, #6C5CE7, #a29bfe) !important;
     color: white !important; border: none !important; border-radius: 20px !important;
@@ -157,89 +153,172 @@ QUICK_PROMPTS = [
     "Help me with my homework 📝", "Tell me a fun fact! 🌟",
     "Give me a memory trick 🎯",   "Make a short summary 📋",
 ]
-MEMORY_FILE = "student_memory.json"
+
+# Google Sheet columns (order matters — matches the sheet header row)
+SHEET_COLS = [
+    "name", "grade", "points", "streak", "sessions",
+    "last_seen", "weak_topics", "strong_topics",
+    "favourite_subject", "notes", "topics_asked"
+]
 
 
-# ── API Key ────────────────────────────────────────────────────────────────────
+# ── Secrets ────────────────────────────────────────────────────────────────────
 try:
     OPENAI_API_KEY = st.secrets["OPENAI_API_KEY"]
 except Exception:
     OPENAI_API_KEY = None
 
 
-# ── Memory helpers ─────────────────────────────────────────────────────────────
-def load_all_memory():
-    if os.path.exists(MEMORY_FILE):
-        with open(MEMORY_FILE, "r") as f:
-            return json.load(f)
-    return {}
+# ── Google Sheets connection ───────────────────────────────────────────────────
+@st.cache_resource(show_spinner=False)
+def get_sheet():
+    """Connect to Google Sheet using service account from Streamlit secrets."""
+    scopes = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive",
+    ]
+    # Credentials stored in st.secrets["gcp_service_account"]
+    creds = Credentials.from_service_account_info(
+        st.secrets["gcp_service_account"], scopes=scopes
+    )
+    client = gspread.authorize(creds)
+    # Opens sheet by name set in secrets: SHEET_NAME = "VidyaStudents"
+    sheet = client.open(st.secrets["SHEET_NAME"]).sheet1
 
-def save_all_memory(data):
-    with open(MEMORY_FILE, "w") as f:
-        json.dump(data, f, indent=2)
+    # Auto-create header row if sheet is empty
+    if sheet.row_count == 0 or sheet.row_values(1) != SHEET_COLS:
+        sheet.clear()
+        sheet.append_row(SHEET_COLS)
 
+    return sheet
+
+
+def find_student_row(sheet, name_key):
+    """Return (row_index, data_dict) for student or (None, None)."""
+    try:
+        records = sheet.get_all_records()
+        for i, row in enumerate(records):
+            if str(row.get("name", "")).strip().lower() == name_key:
+                return i + 2, row   # +2 because row 1 = header, gspread is 1-indexed
+    except Exception:
+        pass
+    return None, None
+
+
+def row_to_mem(row):
+    """Convert a sheet row dict → memory dict (parse JSON list fields)."""
+    mem = {}
+    for col in SHEET_COLS:
+        val = row.get(col, "")
+        if col in ("weak_topics", "strong_topics", "topics_asked"):
+            try:
+                mem[col] = json.loads(val) if val else []
+            except Exception:
+                mem[col] = []
+        elif col in ("points", "streak", "sessions"):
+            try:
+                mem[col] = int(val) if val else 0
+            except Exception:
+                mem[col] = 0
+        else:
+            mem[col] = str(val) if val else ""
+    return mem
+
+
+def mem_to_row(mem):
+    """Convert memory dict → flat list in SHEET_COLS order for writing."""
+    row = []
+    for col in SHEET_COLS:
+        val = mem.get(col, "")
+        if col in ("weak_topics", "strong_topics", "topics_asked"):
+            row.append(json.dumps(val if isinstance(val, list) else []))
+        else:
+            row.append(str(val) if val is not None else "")
+    return row
+
+
+# ── Memory CRUD ────────────────────────────────────────────────────────────────
 def get_student_memory(name):
-    """Return memory dict for a student, creating if not exists."""
-    all_mem = load_all_memory()
-    key = name.strip().lower()
-    if key not in all_mem:
-        all_mem[key] = {
+    """Load student from sheet, create new row if not found."""
+    sheet    = get_sheet()
+    name_key = name.strip().lower()
+    row_idx, row = find_student_row(sheet, name_key)
+
+    if row_idx is None:
+        # New student — create default record
+        mem = {
             "name": name.strip().title(),
-            "grade": "",
-            "points": 0,
-            "streak": 0,
-            "sessions": 0,
-            "last_seen": "",
-            "topics_asked": [],       # all topics ever asked
-            "weak_topics": [],        # topics asked 3+ times (needs help)
-            "strong_topics": [],      # topics answered well
-            "favourite_subject": "",
-            "notes": "",              # teacher/tutor notes
+            "grade": "", "points": 0, "streak": 0, "sessions": 0,
+            "last_seen": "", "weak_topics": [], "strong_topics": [],
+            "favourite_subject": "", "notes": "", "topics_asked": [],
         }
-        save_all_memory(all_mem)
-    return all_mem[key]
+        sheet.append_row(mem_to_row(mem))
+        return mem
+
+    return row_to_mem(row)
+
 
 def update_student_memory(name, updates):
-    all_mem = load_all_memory()
-    key = name.strip().lower()
-    if key in all_mem:
-        all_mem[key].update(updates)
-        save_all_memory(all_mem)
+    """Merge updates into student's sheet row."""
+    sheet    = get_sheet()
+    name_key = name.strip().lower()
+    row_idx, row = find_student_row(sheet, name_key)
 
-def add_topic(name, topic, is_weak=False):
-    """Track topics; mark as weak if asked 3+ times."""
-    all_mem = load_all_memory()
-    key = name.strip().lower()
-    if key not in all_mem:
+    if row_idx is None:
+        return  # Should not happen
+
+    mem = row_to_mem(row)
+    mem.update(updates)
+    sheet.update(f"A{row_idx}:{chr(64+len(SHEET_COLS))}{row_idx}", [mem_to_row(mem)])
+
+
+def add_topic(name, topic):
+    """Append topic to topics_asked; auto-promote to weak if asked 3+ times."""
+    sheet    = get_sheet()
+    name_key = name.strip().lower()
+    row_idx, row = find_student_row(sheet, name_key)
+    if row_idx is None:
         return
-    mem = all_mem[key]
-    mem["topics_asked"].append(topic)
-    # Keep last 50 topics
-    mem["topics_asked"] = mem["topics_asked"][-50:]
-    # Count repeats → weak topic
-    if is_weak and topic not in mem["weak_topics"]:
-        mem["weak_topics"].append(topic)
-        mem["weak_topics"] = mem["weak_topics"][-20:]
-    save_all_memory(all_mem)
+
+    mem = row_to_mem(row)
+    topics = mem.get("topics_asked", [])
+    topics.append(topic)
+    topics = topics[-50:]   # keep last 50
+
+    # Mark as weak if same topic asked 3+ times
+    weak = mem.get("weak_topics", [])
+    if topics.count(topic) >= 3 and topic not in weak:
+        weak.append(topic)
+        weak = weak[-20:]
+
+    mem["topics_asked"] = topics
+    mem["weak_topics"]  = weak
+    sheet.update(f"A{row_idx}:{chr(64+len(SHEET_COLS))}{row_idx}", [mem_to_row(mem)])
+
 
 def list_students():
-    all_mem = load_all_memory()
-    return list(all_mem.keys())
+    """Return list of all student names from sheet."""
+    try:
+        sheet   = get_sheet()
+        records = sheet.get_all_records()
+        return [r["name"] for r in records if r.get("name")]
+    except Exception:
+        return []
+
 
 def memory_summary(mem):
-    """Build a text summary of student memory for the system prompt."""
     lines = [f"Student name: {mem['name']}"]
-    if mem.get("grade"):        lines.append(f"Grade: {mem['grade']}")
-    if mem.get("sessions"):     lines.append(f"Total sessions: {mem['sessions']}")
-    if mem.get("last_seen"):    lines.append(f"Last studied: {mem['last_seen']}")
-    if mem.get("weak_topics"):  lines.append(f"Topics needing extra help: {', '.join(mem['weak_topics'][-5:])}")
-    if mem.get("strong_topics"):lines.append(f"Topics the student is good at: {', '.join(mem['strong_topics'][-5:])}")
+    if mem.get("grade"):             lines.append(f"Grade: {mem['grade']}")
+    if mem.get("sessions"):          lines.append(f"Total sessions: {mem['sessions']}")
+    if mem.get("last_seen"):         lines.append(f"Last studied: {mem['last_seen']}")
+    if mem.get("weak_topics"):       lines.append(f"Topics needing extra help: {', '.join(mem['weak_topics'][-5:])}")
+    if mem.get("strong_topics"):     lines.append(f"Topics the student is good at: {', '.join(mem['strong_topics'][-5:])}")
     if mem.get("favourite_subject"): lines.append(f"Favourite subject: {mem['favourite_subject']}")
-    if mem.get("notes"):        lines.append(f"Teacher notes: {mem['notes']}")
+    if mem.get("notes"):             lines.append(f"Teacher notes: {mem['notes']}")
     return "\n".join(lines)
 
 
-# ── Session state init ─────────────────────────────────────────────────────────
+# ── Session state ──────────────────────────────────────────────────────────────
 for k, v in [("messages", []), ("student_name", ""), ("logged_in", False),
              ("points", 0), ("streak", 0)]:
     if k not in st.session_state:
@@ -247,23 +326,23 @@ for k, v in [("messages", []), ("student_name", ""), ("logged_in", False),
 
 
 # ════════════════════════════════════════════════════════════════════════════════
-# ── LOGIN SCREEN (if not logged in) ───────────────────────────────────────────
+# ── LOGIN SCREEN ──────────────────────────────────────────────────────────────
 # ════════════════════════════════════════════════════════════════════════════════
 if not st.session_state.logged_in:
     st.markdown("""
-    <div style="text-align:center; padding: 40px 20px 20px;">
+    <div style="text-align:center;padding:40px 20px 20px;">
       <div style="font-size:64px;">🦉</div>
-      <h1 style="color:white; font-size:36px; font-weight:900; margin:10px 0 4px;">Vidya AI Tutor</h1>
-      <p style="color:rgba(255,255,255,0.8); font-size:16px;">Your Smart CBSE Learning Companion</p>
+      <h1 style="color:white;font-size:36px;font-weight:900;margin:10px 0 4px;">Vidya AI Tutor</h1>
+      <p style="color:rgba(255,255,255,0.8);font-size:16px;">Your Smart CBSE Learning Companion</p>
     </div>
     """, unsafe_allow_html=True)
 
     col1, col2, col3 = st.columns([1, 2, 1])
     with col2:
         st.markdown("""
-        <div style="background:white; border-radius:20px; padding:28px 24px;
+        <div style="background:white;border-radius:20px;padding:28px 24px;
                     box-shadow:0 20px 60px rgba(0,0,0,0.25);">
-          <h3 style="color:#6C5CE7; font-weight:900; margin:0 0 16px; text-align:center;">
+          <h3 style="color:#6C5CE7;font-weight:900;margin:0 0 16px;text-align:center;">
             👋 Who's studying today?
           </h3>
         </div>
@@ -274,25 +353,20 @@ if not st.session_state.logged_in:
 
         with login_tab:
             if existing:
-                selected = st.selectbox(
-                    "Select your name",
-                    [s.title() for s in existing],
-                    label_visibility="visible"
-                )
+                selected = st.selectbox("Select your name", existing, label_visibility="visible")
                 if st.button("▶️ Continue Learning", use_container_width=True):
                     mem = get_student_memory(selected)
                     st.session_state.student_name = mem["name"]
                     st.session_state.points  = mem.get("points", 0)
                     st.session_state.streak  = mem.get("streak", 0)
                     st.session_state.logged_in = True
-                    # Update session count & last seen
                     update_student_memory(selected, {
-                        "sessions": mem.get("sessions", 0) + 1,
+                        "sessions":  mem.get("sessions", 0) + 1,
                         "last_seen": datetime.now().strftime("%d %b %Y"),
                     })
                     st.rerun()
             else:
-                st.info("No students yet. Create a new profile! 👉")
+                st.info("No students yet — create a new profile! 👉")
 
         with new_tab:
             new_name = st.text_input("Your name", placeholder="e.g. Arjun, Priya...")
@@ -304,7 +378,7 @@ if not st.session_state.logged_in:
                     st.session_state.streak  = 0
                     st.session_state.logged_in = True
                     update_student_memory(new_name, {
-                        "sessions": 1,
+                        "sessions":  1,
                         "last_seen": datetime.now().strftime("%d %b %Y"),
                     })
                     st.rerun()
@@ -314,7 +388,7 @@ if not st.session_state.logged_in:
 
 
 # ════════════════════════════════════════════════════════════════════════════════
-# ── MAIN TUTOR (logged in) ─────────────────────────────────────────────────────
+# ── MAIN TUTOR ─────────────────────────────────────────────────────────────────
 # ════════════════════════════════════════════════════════════════════════════════
 student_name = st.session_state.student_name
 mem = get_student_memory(student_name)
@@ -332,7 +406,8 @@ with st.sidebar:
     grade = st.selectbox("Grade", GRADES,
                          index=GRADES.index(mem["grade"]) if mem["grade"] in GRADES else 5,
                          label_visibility="collapsed")
-    update_student_memory(student_name, {"grade": grade})
+    if grade != mem.get("grade"):
+        update_student_memory(student_name, {"grade": grade})
 
     st.markdown("### 📚 Subject")
     subject_emoji = st.selectbox("Subject", list(SUBJECTS.keys()), label_visibility="collapsed")
@@ -350,14 +425,10 @@ with st.sidebar:
     with c2: st.metric("🔥 Streak",  st.session_state.streak)
     st.metric("📅 Sessions", mem.get("sessions", 1))
 
-    # ── Student Memory Panel ───────────────────────────────────────────────────
     st.markdown("---")
     st.markdown("### 🧠 My Memory")
-
-    weak    = mem.get("weak_topics",   [])[-5:]
-    strong  = mem.get("strong_topics", [])[-5:]
-    last    = mem.get("last_seen", "Today")
-
+    weak   = mem.get("weak_topics",   [])[-5:]
+    strong = mem.get("strong_topics", [])[-5:]
     if weak:
         st.markdown("**📌 Needs practice:**")
         st.markdown(" ".join([f"`{t}`" for t in weak]))
@@ -365,22 +436,22 @@ with st.sidebar:
         st.markdown("**✅ Doing well:**")
         st.markdown(" ".join([f"`{t}`" for t in strong]))
 
-    # Teacher note
-    with st.expander("📝 Add a note"):
-        note = st.text_input("Note", value=mem.get("notes",""), label_visibility="collapsed",
+    with st.expander("📝 Add teacher note"):
+        note = st.text_input("Note", value=mem.get("notes", ""),
+                             label_visibility="collapsed",
                              placeholder="e.g. struggles with fractions")
         if st.button("💾 Save Note"):
             update_student_memory(student_name, {"notes": note})
-            st.success("Saved!")
+            st.success("Saved to Google Sheet! ✅")
 
-    # Mark strong topic
     with st.expander("🌟 Mark topic as strong"):
-        strong_input = st.text_input("Topic", label_visibility="collapsed", placeholder="e.g. Photosynthesis")
+        strong_input = st.text_input("Topic", label_visibility="collapsed",
+                                     placeholder="e.g. Photosynthesis")
         if st.button("✅ Mark Strong"):
             if strong_input.strip():
                 updated = list(set(mem.get("strong_topics", []) + [strong_input.strip()]))
                 update_student_memory(student_name, {"strong_topics": updated[-20:]})
-                st.success("Marked!")
+                st.success("Saved! ✅")
 
     st.markdown("---")
     if st.button("🗑️ Clear Chat", use_container_width=True):
@@ -388,7 +459,6 @@ with st.sidebar:
         st.rerun()
 
     if st.button("🔚 Switch Student", use_container_width=True):
-        # Save points/streak before logout
         update_student_memory(student_name, {
             "points": st.session_state.points,
             "streak": st.session_state.streak,
@@ -398,7 +468,7 @@ with st.sidebar:
         st.rerun()
 
     st.markdown("---")
-    st.caption("Built with ❤️ for CBSE students")
+    st.caption("Built with ❤️ for CBSE students\n📊 Memory saved to Google Sheets")
 
 
 # ── Header ─────────────────────────────────────────────────────────────────────
@@ -420,37 +490,36 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-# Show memory recap card if student has history
 if mem.get("weak_topics") or mem.get("last_seen"):
-    weak_html = "".join([f'<span class="memory-tag weak">{t}</span>' for t in mem.get("weak_topics", [])[-3:]])
+    weak_html   = "".join([f'<span class="memory-tag weak">{t}</span>'   for t in mem.get("weak_topics",   [])[-3:]])
     strong_html = "".join([f'<span class="memory-tag strong">{t}</span>' for t in mem.get("strong_topics", [])[-3:]])
-    last_seen = mem.get("last_seen", "")
-    sessions  = mem.get("sessions", 1)
+    last_seen   = mem.get("last_seen", "")
+    sessions    = mem.get("sessions", 1)
     st.markdown(f"""
     <div class="memory-card">
-      <b>🧠 Vidya remembers:</b> &nbsp;
+      <b>🧠 Vidya remembers</b> &nbsp;
       {f"Last studied <b>{last_seen}</b> &nbsp;•&nbsp;" if last_seen else ""}
       <b>{sessions}</b> session{'s' if sessions != 1 else ''} completed
       {f"<br>📌 Needs practice: {weak_html}" if weak_html else ""}
       {f"<br>✅ Strong at: {strong_html}" if strong_html else ""}
+      <br><span style="font-size:11px;color:#888;">💾 Stored in Google Sheets</span>
     </div>
     """, unsafe_allow_html=True)
 
 
-# ── System prompt with memory ──────────────────────────────────────────────────
+# ── System prompt ──────────────────────────────────────────────────────────────
 def build_system_prompt(grade, subject, mem):
-    mem_text = memory_summary(mem)
     return f"""You are Vidya, a friendly and enthusiastic AI tutor for CBSE school students in India.
 
 STUDENT PROFILE:
-{mem_text}
+{memory_summary(mem)}
 
 You are currently helping this student with {subject} ({grade}).
 
 Guidelines:
 - Always address the student by their first name warmly
 - If they have weak topics noted, gently revisit and reinforce those concepts
-- If they are strong at a topic, give them slightly harder challenges to keep them growing
+- If they are strong at a topic, give them slightly harder challenges
 - Follow CBSE curriculum and NCERT textbook content strictly
 - Use simple, clear language appropriate for {grade} students
 - Be encouraging, warm and patient — use emojis to make learning fun!
@@ -464,8 +533,7 @@ Guidelines:
 - For Computers: use simple analogies and practical examples
 - Add fun facts and memory tricks (mnemonics) wherever helpful
 - End with a motivating line or follow-up question
-- Keep responses concise — not too long for a school kid
-- If the student seems to repeatedly ask about the same topic, note it as a weak area"""
+- Keep responses concise — not too long for a school kid"""
 
 
 # ── Chat display ───────────────────────────────────────────────────────────────
@@ -474,7 +542,7 @@ if not st.session_state.messages:
     if mem.get("sessions", 1) > 1:
         greeting += f" Great to see you again! You've completed <b>{mem['sessions']}</b> sessions — keep it up! 🌟"
     if mem.get("weak_topics"):
-        greeting += f"<br>I remember you were working on <b>{mem['weak_topics'][-1]}</b> last time — want to continue? 💪"
+        greeting += f"<br>I remember you were working on <b>{mem['weak_topics'][-1]}</b> — want to continue? 💪"
     else:
         greeting += " I'm ready to help with all your CBSE subjects. What shall we learn today? 😊"
 
@@ -518,12 +586,11 @@ with st.form("chat_form", clear_on_submit=True):
 # ── OpenAI call ────────────────────────────────────────────────────────────────
 if submitted and user_input.strip():
     if not OPENAI_API_KEY:
-        st.error("⚠️ API Key not configured. Add OPENAI_API_KEY in Streamlit Secrets.")
+        st.error("⚠️ Add OPENAI_API_KEY in Streamlit Secrets.")
         st.stop()
 
     st.session_state.messages.append({"role": "user", "content": user_input.strip()})
 
-    # Track topic (use first 6 words as topic label)
     topic_label = " ".join(user_input.strip().split()[:6])
     add_topic(student_name, topic_label)
 
@@ -543,7 +610,6 @@ if submitted and user_input.strip():
         reply = response.choices[0].message.content
         st.session_state.messages.append({"role": "assistant", "content": reply})
 
-        # Update points, streak, favourite subject
         new_points = st.session_state.points + 10
         new_streak = st.session_state.streak + 1
         st.session_state.points = new_points
